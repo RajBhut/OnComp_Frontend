@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Search, Plus, Moon, Sun } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import Nav from "./Nav";
 import CreateProblem from "./CreateProblem ";
+import { Usercontext } from "./UsrProvider";
 
-const Dashboard = () => {
+const YourCode = () => {
+  const { user, setuser } = useContext(Usercontext);
   const [problems, setProblems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDifficultyFilter, setSelectedDifficultyFilter] =
@@ -39,7 +41,7 @@ const Dashboard = () => {
 
   const handleFetch = async () => {
     try {
-      const res = await axios.get(`${API_URL}/problem`, {
+      const res = await axios.get(`${API_URL}/problem/self/${user.id}`, {
         withCredentials: true,
       });
       setProblems(res.data);
@@ -121,39 +123,47 @@ const Dashboard = () => {
               </select>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 ">
               {filteredProblems.map((problem, index) => (
                 <div
                   key={index}
-                  className="border dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow dark:bg-gray-800"
+                  className="border  dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow dark:bg-gray-800"
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-semibold dark:text-white">
-                        {problem.title}
-                      </h3>
-                      <div className="prose dark:prose-invert max-w-none">
-                        {/* <ReactMarkdown>{problem.description}</ReactMarkdown> */}
-                        {problem.description}
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {problem.tags?.map((tag, tagIndex) => (
-                          <span
-                            key={tagIndex}
-                            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm dark:bg-gray-700 dark:text-gray-200"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                  <div className="flex justify-between">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-2">
+                        <h3 className="text-xl font-semibold dark:text-white">
+                          {problem.title}
+                        </h3>
+                        <div className="prose dark:prose-invert max-w-none">
+                          <ReactMarkdown>{problem.description}</ReactMarkdown>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {problem.tags?.map((tag, tagIndex) => (
+                            <span
+                              key={tagIndex}
+                              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm dark:bg-gray-700 dark:text-gray-200"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
-                        problem.difficulty
-                      )}`}
-                    >
-                      {problem.difficulty}
-                    </span>
+                    <div className="flex flex-col    justify-around  min-h-full">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
+                          problem.difficulty
+                        )}`}
+                      >
+                        {problem.difficulty}
+                      </span>
+                      <Link to={"/add"} state={problem}>
+                        <button className="px-3 py-1 rounded-full text-sm font-medium bg-white">
+                          Edit
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -165,4 +175,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default YourCode;

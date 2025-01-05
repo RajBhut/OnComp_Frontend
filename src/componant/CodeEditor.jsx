@@ -2,9 +2,6 @@ import React, { useEffect } from "react";
 import MonacoEditor from "@monaco-editor/react";
 
 const CodeEditor = ({ handle_change, launguage = "javascript", value }) => {
-  useEffect(() => {
-    console.log("rendered!!!");
-  }, [launguage]);
   return (
     <div style={{ height: "500px" }}>
       <MonacoEditor

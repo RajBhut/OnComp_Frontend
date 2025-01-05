@@ -17,15 +17,6 @@ export default function Loginc() {
   const [confirmPassword, setconfirmPassword] = useState("");
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("user")) {
-  //     setuser(JSON.parse(localStorage.getItem("user")));
-  //   }
-  //   if (user) {
-  //     navigate("/home");
-  //   }
-  // }, []);
-
   const loginOrSignup = async () => {
     setloading(true);
 
