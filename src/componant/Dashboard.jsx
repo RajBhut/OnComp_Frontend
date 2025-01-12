@@ -125,36 +125,38 @@ const Dashboard = () => {
               {filteredProblems.map((problem, index) => (
                 <div
                   key={index}
-                  className="border dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow dark:bg-gray-800"
+                  className="border dark:border-gray-700 rounded-lg py-2 px-4 hover:shadow-md transition-shadow dark:bg-gray-800"
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-semibold dark:text-white">
-                        {problem.title}
-                      </h3>
-                      <div className="prose dark:prose-invert max-w-none">
-                        {/* <ReactMarkdown>{problem.description}</ReactMarkdown> */}
-                        {problem.description}
+                  <Link to={`/problem/${problem.id}`}>
+                    <div className="flex justify-between items-start">
+                      <div className="">
+                        <h3 className="text-lg font-semibold dark:text-white">
+                          {problem.title}
+                        </h3>
+                        {/* <div className="prose dark:prose-invert max-w-none">
+                          
+                          {problem.description}
+                        </div> */}
+                        <div className="flex flex-wrap gap-2">
+                          {problem.tags?.map((tag, tagIndex) => (
+                            <span
+                              key={tagIndex}
+                              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm dark:bg-gray-700 dark:text-gray-200"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        {problem.tags?.map((tag, tagIndex) => (
-                          <span
-                            key={tagIndex}
-                            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm dark:bg-gray-700 dark:text-gray-200"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
+                          problem.difficulty
+                        )}`}
+                      >
+                        {problem.difficulty}
+                      </span>
                     </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
-                        problem.difficulty
-                      )}`}
-                    >
-                      {problem.difficulty}
-                    </span>
-                  </div>
+                  </Link>
                 </div>
               ))}
             </div>

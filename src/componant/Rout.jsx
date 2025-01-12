@@ -6,6 +6,9 @@ import Dashboard from "./Dashboard";
 import CreateProblem from "./CreateProblem ";
 import Yourcode from "./Yourcode";
 import ProblemAdder from "./ProblemAdder";
+import Problem_Page from "./Problem_Page";
+import Graph from "./Graph";
+import GraphProvider from "./GraphProvider";
 
 export default function Rout() {
   return (
@@ -18,7 +21,15 @@ export default function Rout() {
         <Route path="/create" element={<CreateProblem />} />
         <Route path="/yourcode" element={<Yourcode />} />
         <Route path="/add" element={<ProblemAdder />} />
-        {/* <Route path="/page/:id" element={<Page />} /> */}
+        <Route path="/home" element={<Dashboard />} />
+        <Route
+          path="/problem/:id"
+          element={
+            <GraphProvider>
+              <Problem_Page />
+            </GraphProvider>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

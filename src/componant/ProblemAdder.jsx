@@ -55,15 +55,19 @@ export default function ProblemAdder() {
     let java = data.find((p) => p.language == "JAVA");
     let cpp = data.find((p) => p.language == "CPP");
 
-    if (!js) {
+    if (js == undefined) {
       data.push(dumy("JAVASCRIPT"));
-    } else if (!py) {
+    }
+    if (py == undefined) {
       data.push(dumy("PYTHON"));
-    } else if (!java) {
+    }
+    if (java == undefined) {
       data.push(dumy("JAVA"));
-    } else if (!cpp) {
+    }
+    if (cpp == undefined) {
       data.push(dumy("CPP"));
     }
+
     setfetched_data(data);
   };
 

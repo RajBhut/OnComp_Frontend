@@ -48,8 +48,11 @@ export default function Loginc() {
       const data = res.data;
       setloading(false);
 
-      if (data.message === "User registered successfully") {
-        setuser(data.user);
+      if (
+        data.message === "User registered successfully" ||
+        data.message === "Logged in successfully"
+      ) {
+        if (data.user) setuser(data.user);
         localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/home");
       } else if (data.message === "Login successful") {
