@@ -5,11 +5,13 @@ import "../App.css";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import CodeEditor from "./CodeEditor";
 import Split from "react-split";
-import { Moon, Sun } from "lucide-react";
+import { Home, Moon, Sun } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import Graph from "./Graph";
 import GraphProvider, { Graphcontext } from "./GraphProvider";
 export default function Problem_Page() {
+  const API_URL = import.meta.env.VITE_API_URL;
+  const CODE_API_URL = import.meta.env.VITE_CODE_API_URL;
   const { Graphdata, setGraphdata, Edgedata, setEdgedata } =
     useContext(Graphcontext);
   const [isfatched, setisfatched] = useState(false);
@@ -32,15 +34,13 @@ export default function Problem_Page() {
 
 #### Example 1:
 
-  `;
+`;
 
   const recive_notes_data = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/problem/update/${id}`);
-
-      setGraphdata(JSON.parse(res.data.nodedata));
-
-      setEdgedata(JSON.parse(res.data.edgedata));
+      const res = await axios.get(`${API_URL}/problem/update/${id}`);
+      if (res.data.nodedata) setGraphdata(JSON.parse(res.data.nodedata));
+      if (res.data.edgedata) setEdgedata(JSON.parse(res.data.edgedata));
     } catch (error) {
       console.log(error);
     }
@@ -56,16 +56,16 @@ export default function Problem_Page() {
     }
     return false;
   });
+
   const decode_data = (arr) => {
     arr.forEach((data) => {
       data.function = decodeURIComponent(atob(data.function));
-
       data.testcases = decodeURIComponent(atob(data.testcases));
       data.checker = decodeURIComponent(atob(data.checker));
     });
-
     return arr;
   };
+
   const validate = (data) => {
     const dumy = (lan) => {
       return {
@@ -80,7 +80,6 @@ export default function Problem_Page() {
     };
     let js = data.find((p) => p.language == "JAVASCRIPT");
     let py = data.find((p) => p.language == "PYTHON");
-
     let java = data.find((p) => p.language == "JAVA");
     let cpp = data.find((p) => p.language == "CPP");
 
@@ -97,44 +96,62 @@ export default function Problem_Page() {
       data.push(dumy("CPP"));
     }
 
-    setfetched_data(data);
+    return data;
   };
+
   const fetch_problem_data = async (id) => {
     try {
-      const res = await axios.get(`http://localhost:8000/problem/data/${id}`, {
+      const res = await axios.get(`${API_URL}/problem/update/${id}`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
 
-      if (res.data[0].description) {
-        setDescription(res.data[0].description);
+      const problem = res.data;
+
+      if (problem && problem.description) {
+        setDescription(problem.description);
+      } else {
+        setDescription(null);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching problem data:", error);
       navigator("/");
     }
   };
 
   const fetch_data = async (id) => {
     setisfatched(false);
-    const response = await axios.get(
-      `http://localhost:8000/problem/one/${id}`,
-
-      {
+    try {
+      const response = await axios.get(`${API_URL}/problem/one/${id}`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
+      });
+
+      const decoded = decode_data(response.data);
+      const validatedData = validate(decoded);
+      setfetched_data(validatedData);
+
+      const initialLanguageCode = validatedData.find(
+        (code) => code.language === language.toUpperCase()
+      );
+      if (initialLanguageCode) {
+        setCode(initialLanguageCode.function);
+        setTestCase(initialLanguageCode.testcases);
+        setTestCode(initialLanguageCode.checker);
       }
-    );
 
-    const decoded = decode_data(response.data);
-    validate(decoded);
-
-    setisfatched(true);
+      setisfatched(true);
+    } catch (error) {
+      console.error(error);
+      setisfatched(false);
+    }
   };
+
   useEffect(() => {
     fetch_problem_data(id);
     fetch_data(id);
   }, []);
+
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
@@ -143,18 +160,19 @@ export default function Problem_Page() {
     }
   }, [isDarkMode]);
 
-  const find_launguage_code = (launguage) => {
-    const out = fetched_data.find((code) => {
-      return code.language == launguage.toUpperCase();
-    });
-
-    setCode(out.function);
-    setTestCase(out.testcases);
-    setTestCode(out.checker);
-  };
   useEffect(() => {
-    if (isfatched) find_launguage_code(language);
-  }, [language]);
+    if (isfatched && fetched_data.length > 0) {
+      const languageCode = fetched_data.find(
+        (code) => code.language === language.toUpperCase()
+      );
+      if (languageCode) {
+        setCode(languageCode.function);
+        setTestCase(languageCode.testcases);
+        setTestCode(languageCode.checker);
+      }
+    }
+  }, [language, isfatched, fetched_data]);
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     localStorage.setItem("darkMode", !isDarkMode);
@@ -166,12 +184,13 @@ export default function Problem_Page() {
     { value: "java", label: "Java" },
     { value: "cpp", label: "C++" },
   ];
+
   const handleSubmit = async () => {
     if (!code.trim()) {
       alert("Please enter some code");
       return;
     }
-    console.log(code);
+
     setIsLoading(true);
     try {
       const payload = {
@@ -180,12 +199,10 @@ export default function Problem_Page() {
         testcase: btoa(encodeURIComponent(testCase)),
         testcode: btoa(encodeURIComponent(testCode)),
       };
-
-      const response = await axios.post("http://localhost:3000/prob", payload, {
+      const response = await axios.post(`${CODE_API_URL}/prob`, payload, {
         headers: { "Content-Type": "application/json" },
         withCredentials: false,
       });
-      console.log(response.data);
       setOutput(response.data);
     } catch (error) {
       console.error(error);
@@ -194,6 +211,7 @@ export default function Problem_Page() {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.ctrlKey && event.key === "Enter") {
@@ -213,82 +231,202 @@ export default function Problem_Page() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <div className="container mx-auto p-4">
+    <div
+      className={`min-h-screen font-mono transition-all duration-500 ${
+        isDarkMode
+          ? "bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800 text-white"
+          : "bg-gradient-to-br from-blue-400 via-cyan-400 to-teal-400 text-gray-900"
+      }`}
+    >
+      <div className="container mx-auto min-w-full">
         <Split className="flex" sizes={[40, 60]}>
-          <div className="prose p-2 font-mono text-xs prose-sm md:prose-base lg:prose-lg dark:prose-invert bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden flex flex-col">
-            <ReactMarkdown>{description}</ReactMarkdown>
-          </div>
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden flex flex-col">
-            <div className="bg-gray-100 dark:bg-gray-700 p-4 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                Code Input
-              </h2>
-              <button
-                onClick={() => {
-                  handleSubmit();
-                }}
-                disabled={isLoading}
-                className=" bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300 dark:disabled:bg-blue-800"
+          <div className="flex-col w-full pr-2">
+            <Split
+              direction="vertical"
+              sizes={[90, 10]}
+              minSize={100}
+              className="gutter-vertical flex flex-col"
+              style={{ height: "calc(100vh - 2rem)" }}
+            >
+              <div
+                className={`flex flex-col rounded-lg shadow-xl backdrop-blur-lg border border-transparent
+                ${
+                  isDarkMode
+                    ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                    : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+                }`}
               >
-                {isLoading ? "sending..." : "send Code"}
+                <div
+                  className={`p-4 ${
+                    isDarkMode
+                      ? "bg-white bg-opacity-10"
+                      : "bg-white bg-opacity-20"
+                  }`}
+                >
+                  <h2 className="text-lg font-bold">Description</h2>
+                </div>
+                <div className="prose w-full mb-5 p-4 text-xs prose-sm md:prose-base lg:prose-lg dark:prose-invert overflow-auto">
+                  <ReactMarkdown>{description}</ReactMarkdown>
+                </div>
+              </div>
+
+              <div
+                className={`flex font-mono flex-col rounded-lg shadow-xl backdrop-blur-lg border border-transparent mt-4
+                ${
+                  isDarkMode
+                    ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                    : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+                }`}
+              >
+                <div
+                  className={`p-4 ${
+                    isDarkMode
+                      ? "bg-white bg-opacity-10"
+                      : "bg-white bg-opacity-20"
+                  }`}
+                >
+                  <h2 className="text-lg font-bold">Output</h2>
+                </div>
+                <div className="flex-1 p-4 overflow-hidden">
+                  <textarea
+                    value={output}
+                    readOnly
+                    placeholder="Output will appear here..."
+                    className={`w-full h-full p-2 rounded-lg outline-none resize-none
+                      ${
+                        isDarkMode
+                          ? "bg-white bg-opacity-5"
+                          : "bg-white bg-opacity-10"
+                      }`}
+                  />
+                </div>
+              </div>
+            </Split>
+          </div>
+
+          <div
+            className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent flex flex-col
+            ${
+              isDarkMode
+                ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+            }`}
+          >
+            <div className="p-4 flex justify-between items-center">
+              <h2 className="text-xl font-bold">Code Input</h2>
+
+              <button
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className={`px-4 py-2 rounded-lg transition-all duration-300
+                  ${
+                    isDarkMode
+                      ? "bg-violet-600 hover:bg-violet-700 disabled:bg-violet-800"
+                      : "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400"
+                  } text-white`}
+              >
+                {isLoading ? "Running..." : "Run"}
               </button>
-              <div className="flex items-center space-x-4">
+
+              <div className="flex items-center gap-4">
                 <button
                   onClick={toggleDarkMode}
-                  className="p-2 rounded-lg bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                  className={`p-3 rounded-full shadow-lg transition-all duration-300 ${
+                    isDarkMode
+                      ? "bg-yellow-400 text-gray-900"
+                      : "bg-indigo-600 text-white"
+                  }`}
                 >
                   {isDarkMode ? (
-                    <Sun className="w-5 h-5 text-yellow-500" />
+                    <Sun className="w-5 h-5" />
                   ) : (
-                    <Moon className="w-5 h-5 text-gray-700" />
+                    <Moon className="w-5 h-5" />
                   )}
                 </button>
+
                 <Link
-                  className="text-white bg-blue-600 flex justify-center items-center hover:bg-blue-700 px-4 py-2 rounded-lg"
-                  to={"/"}
+                  to="/"
+                  className={`p-3 rounded-lg transition-all duration-300
+                    backdrop-blur-lg border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:bg-opacity-20"
+                        : "bg-white bg-opacity-20 hover:bg-opacity-30"
+                    }`}
                 >
-                  Home
+                  <Home className="w-5 h-5" />
                 </Link>
+
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className={`px-4 py-2 rounded-lg outline-none
+                    transition-all duration-300 backdrop-blur-lg border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:bg-opacity-20"
+                        : "bg-white bg-opacity-20 hover:bg-opacity-30"
+                    }`}
                 >
                   {LANGUAGES.map((lang) => (
-                    <option key={lang.value} value={lang.value}>
+                    <option
+                      className={`text-black ${
+                        isDarkMode
+                          ? "bg-purple-500 bg-opacity-10 hover:bg-opacity-20"
+                          : "bg-teal-100 bg-opacity-20 hover:bg-opacity-30"
+                      } `}
+                      key={lang.value}
+                      value={lang.value}
+                    >
                       {lang.label}
                     </option>
                   ))}
                 </select>
+
                 <button
                   onClick={() => setCode(CODE_TEMPLATES[language])}
-                  className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 px-2 py-1 rounded text-gray-700 dark:text-gray-200"
+                  className={`px-4 py-2 rounded-lg transition-all duration-300
+                    backdrop-blur-lg border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:bg-opacity-20"
+                        : "bg-white bg-opacity-20 hover:bg-opacity-30"
+                    }`}
                 >
                   Template
                 </button>
               </div>
             </div>
 
-            <div className="flex border-b dark:border-gray-700">
+            <div className="flex border-b border-white border-opacity-20">
               {["code", "testcase", "note"].map((tab) => (
                 <button
                   key={tab}
-                  className={`px-4 py-2 flex-1 ${
-                    activeTab === tab
-                      ? "bg-blue-100 dark:bg-blue-900 border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
                   onClick={() => setActiveTab(tab)}
+                  className={`flex-1 px-6 py-3 transition-all duration-300
+                    ${
+                      activeTab === tab
+                        ? isDarkMode
+                          ? "bg-white bg-opacity-10 border-b-2 border-white"
+                          : "bg-white bg-opacity-30 border-b-2 border-white"
+                        : "hover:bg-white hover:bg-opacity-10"
+                    }`}
                 >
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </button>
               ))}
             </div>
 
-            <div className="p-4 flex-grow overflow-auto dark:bg-gray-800">
+            <div className="p-6 flex-grow overflow-auto">
               {activeTab === "code" && (
-                <div className="w-full h-full p-2 border rounded font-mono resize-none dark:border-gray-700">
+                <div
+                  className={`w-full h-full rounded-lg overflow-hidden border border-transparent
+                  ${
+                    isDarkMode
+                      ? "bg-white bg-opacity-5"
+                      : "bg-white bg-opacity-10"
+                  }`}
+                >
                   <CodeEditor
                     handle_change={(e) => setCode(e)}
                     value={code}
@@ -311,8 +449,6 @@ export default function Problem_Page() {
                 </GraphProvider>
               )}
             </div>
-
-            <div className="p-4 dark:bg-gray-800"></div>
           </div>
         </Split>
       </div>

@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Search, Plus, Moon, Sun } from "lucide-react";
+import { Search, Plus, Moon, Sun, Trash, TrashIcon } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
 import Nav from "./Nav";
-import CreateProblem from "./CreateProblem ";
 import { Usercontext } from "./UsrProvider";
-
+import "./Home.css";
+const API_URL = import.meta.env.VITE_API_URL;
+const CODE_API_URL = import.meta.env.VITE_CODE_API_URL;
 const YourCode = () => {
   const { user, setuser } = useContext(Usercontext);
   const [problems, setProblems] = useState([]);
@@ -20,8 +20,6 @@ const YourCode = () => {
     }
     return false;
   });
-
-  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     handleFetch();
@@ -68,12 +66,26 @@ const YourCode = () => {
       problem.difficulty === selectedDifficultyFilter;
     return matchesSearch && matchesDifficulty;
   });
+  const delete_code = async (problem) => {
+    try {
+      const res = axios.delete(`${API_URL}/problem/delete/${problem.id}`);
+      handleFetch();
+    } catch (error) {
+      console.error(e);
+    }
+  };
 
   return (
     <>
-      <Nav />
+      <Nav isDarkMode={isDarkMode} />
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8 transition-colors duration-200">
+      <div
+        className={`min-h-screen transition-all duration-300 ${
+          isDarkMode
+            ? "bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800 text-white"
+            : "bg-gradient-to-br from-blue-400 via-cyan-400 to-teal-400 text-gray-900"
+        } p-4 md:p-8`}
+      >
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
@@ -81,45 +93,106 @@ const YourCode = () => {
             </h1>
             <div className="flex gap-4">
               <Link
-                className="text-white bg-blue-600 flex justify-center items-center hover:bg-blue-700 px-4 py-2 rounded-lg"
+                className={`p-3 mx-2 theme-toggle hover:rotate-1 rounded-full shadow-lg transition-all duration-300 ${
+                  isDarkMode
+                    ? "bg-yellow-400 text-gray-900"
+                    : "bg-indigo-600 text-white"
+                }`}
                 to={"/home"}
               >
                 Playground
               </Link>
               <button
                 onClick={toggleDarkMode}
-                className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                className={`p-3 theme-toggle hover:rotate-180 rounded-full shadow-lg transition-all duration-300 ${
+                  isDarkMode
+                    ? "bg-yellow-400 text-gray-900"
+                    : "bg-indigo-600 text-white"
+                }`}
               >
                 {isDarkMode ? (
-                  <Sun className="w-5 h-5 text-yellow-500" />
+                  <Sun className="w-6 h-5 " />
                 ) : (
-                  <Moon className="w-5 h-5 text-gray-700" />
+                  <Moon className="w-6 h-5 " />
                 )}
               </button>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div
+            className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent 
+            transition-all duration-300 hover:shadow-2xl p-6
+            ${
+              isDarkMode
+                ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+            }`}
+          >
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 
+                  ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+                />
                 <input
                   type="text"
                   placeholder="Search problems..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className={`w-full pl-10 pr-4 py-2 rounded-lg outline-none 
+                    bg-white bg-opacity-20 backdrop-blur-lg border border-transparent
+                    focus:border-white focus:border-opacity-30
+                    ${isDarkMode ? "text-white" : "text-gray-900"}`}
                 />
               </div>
               <select
                 value={selectedDifficultyFilter}
                 onChange={(e) => setSelectedDifficultyFilter(e.target.value)}
-                className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                className={`px-4 py-2 rounded-lg outline-none
+                  bg-white bg-opacity-20 backdrop-blur-lg border border-transparent
+                  focus:border-white focus:border-opacity-30
+                  ${isDarkMode ? "text-white" : "text-gray-900"}`}
               >
-                <option value="ALL">All Difficulties</option>
-                <option value="EASY">Easy</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HARD">Hard</option>
+                <option
+                  className={`text-black ${
+                    isDarkMode
+                      ? "bg-purple-500 bg-opacity-10 hover:bg-opacity-20"
+                      : "bg-teal-100 bg-opacity-20 hover:bg-opacity-30"
+                  } `}
+                  value="ALL"
+                >
+                  All Difficulties
+                </option>
+                <option
+                  className={`text-black ${
+                    isDarkMode
+                      ? "bg-purple-500 bg-opacity-10 hover:bg-opacity-20"
+                      : "bg-teal-100 bg-opacity-20 hover:bg-opacity-30"
+                  } `}
+                  value="EASY"
+                >
+                  Easy
+                </option>
+                <option
+                  className={`text-black ${
+                    isDarkMode
+                      ? "bg-purple-500 bg-opacity-10 hover:bg-opacity-20"
+                      : "bg-teal-100 bg-opacity-20 hover:bg-opacity-30"
+                  } `}
+                  value="MEDIUM"
+                >
+                  Medium
+                </option>
+                <option
+                  className={`text-black ${
+                    isDarkMode
+                      ? "bg-purple-500 bg-opacity-10 hover:bg-opacity-20"
+                      : "bg-teal-100 bg-opacity-20 hover:bg-opacity-30"
+                  } `}
+                  value="HARD"
+                >
+                  Hard
+                </option>
               </select>
             </div>
 
@@ -127,7 +200,14 @@ const YourCode = () => {
               {filteredProblems.map((problem, index) => (
                 <div
                   key={index}
-                  className="border  dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow dark:bg-gray-800"
+                  className={`rounded-xl p-4 transition-all duration-300
+                    backdrop-blur-lg border border-transparent
+                    hover:shadow-xl hover:scale-[1.02]
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                        : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+                    }`}
                 >
                   <div className="flex justify-between">
                     <div className="flex justify-between items-start">
@@ -135,14 +215,17 @@ const YourCode = () => {
                         <h3 className="text-xl font-semibold dark:text-white">
                           {problem.title}
                         </h3>
-                        <div className="prose dark:prose-invert max-w-none">
-                          <ReactMarkdown>{problem.description}</ReactMarkdown>
-                        </div>
+
                         <div className="flex flex-wrap gap-2">
                           {problem.tags?.map((tag, tagIndex) => (
                             <span
                               key={tagIndex}
-                              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm dark:bg-gray-700 dark:text-gray-200"
+                              className={`px-3 py-1 rounded-full text-sm backdrop-blur-lg
+                                ${
+                                  isDarkMode
+                                    ? "bg-white bg-opacity-10 text-gray-100"
+                                    : "bg-white bg-opacity-30 text-gray-900"
+                                }`}
                             >
                               {tag}
                             </span>
@@ -150,19 +233,33 @@ const YourCode = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-col    justify-around  min-h-full">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
-                          problem.difficulty
-                        )}`}
+                    <div className="flex    gap-1 items-center min-h-full">
+                      <div className="flex gap-2 justify-center items-center  flex-col">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
+                            problem.difficulty
+                          )}`}
+                        >
+                          {problem.difficulty}
+                        </span>
+
+                        <Link to={"/add"} state={problem}>
+                          <button className="px-3 py-1 rounded-full text-black  hover:bg-slate-100 hover:ring-2 text-sm font-medium bg-white">
+                            Edit
+                          </button>
+                        </Link>
+                      </div>
+                      <button
+                        className="p-2 rounded-full hover:bg-red-100/20
+transition-colors duration-200
+focus:outline-none focus:ring-2 focus:ring-red-200"
+                        aria-label="Delete problem"
+                        onClick={() => {
+                          delete_code(problem);
+                        }}
                       >
-                        {problem.difficulty}
-                      </span>
-                      <Link to={"/add"} state={problem}>
-                        <button className="px-3 py-1 rounded-full text-sm font-medium bg-white">
-                          Edit
-                        </button>
-                      </Link>
+                        <TrashIcon />
+                      </button>
                     </div>
                   </div>
                 </div>

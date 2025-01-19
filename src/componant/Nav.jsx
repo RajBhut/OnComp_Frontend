@@ -1,25 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
-function Nav() {
+function Nav({ isDarkMode }) {
   return (
     <>
-      <nav className="">
-        <ul className="flex justify-center space-x-4 gap-10 bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-bold text-white ">
-          {["Home", "YourCode", "login", "Create", "Play"].map(
-            (item, index) => {
-              return (
-                <li
-                  className="hover:text-black transition-all duration-500 px-4 py-2 "
-                  key={index}
-                >
-                  <Link to={`/${item.toLowerCase()}`} key={index}>
+      <nav>
+        <div
+          className={`transition-all duration-500 ${
+            isDarkMode
+              ? "bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800"
+              : "bg-gradient-to-br from-blue-400 via-cyan-400 to-teal-400"
+          }`}
+        >
+          <ul className="flex justify-center items-center max-w-6xl mx-auto">
+            {["Home", "YourCode", "Login", "Create", "Play"].map(
+              (item, index) => (
+                <li key={index}>
+                  <Link
+                    to={`/${item.toLowerCase()}`}
+                    className={`block px-6 py-4 font-bold transition-all duration-300
+                  ${
+                    isDarkMode
+                      ? "text-white hover:bg-white hover:bg-opacity-10"
+                      : "text-gray-900 hover:bg-white hover:bg-opacity-20"
+                  }
+                  backdrop-blur-lg`}
+                  >
                     {item}
                   </Link>
                 </li>
-              );
-            }
-          )}
-        </ul>
+              )
+            )}
+          </ul>
+        </div>
       </nav>
     </>
   );

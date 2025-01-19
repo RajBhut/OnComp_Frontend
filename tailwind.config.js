@@ -9,7 +9,7 @@ module.exports = {
           css: {
             maxWidth: "none",
             code: {
-              backgroundColor: "#f3f4f6",
+              backgroundColor: "hwb(59 28% 2% / 0.463)",
               padding: "2px 4px",
               borderRadius: "4px",
               fontSize: "0.875em",

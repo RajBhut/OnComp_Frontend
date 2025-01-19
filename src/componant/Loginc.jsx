@@ -1,224 +1,197 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Usercontext } from "./UsrProvider";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Usercontext } from "./UsrProvider";
 import axios from "axios";
-import { User, Lock, Mail, ArrowRight, UserCircle2 } from "lucide-react";
-axios.defaults.withCredentials = true;
-const API_URL = import.meta.env.VITE_API_URL;
+import {
+  SunIcon,
+  MoonIcon,
+  UserIcon,
+  LockIcon,
+  MailIcon,
+  ArrowRightIcon,
+  Home,
+} from "lucide-react";
 
-export default function Loginc() {
-  const { setuser, user } = useContext(Usercontext);
-  const [error, seterror] = useState("");
-  const [loading, setloading] = useState(false);
+export default function LoginPage() {
+  const { setuser } = useContext(Usercontext);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [mode, setmode] = useState("signup");
-  const [confirmPassword, setconfirmPassword] = useState("");
+  const [mode, setMode] = useState("signup");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    if (isDarkMode) {
+      document.documentElement.classList.remove("dark");
+    } else {
+      document.documentElement.classList.add("dark");
+    }
+  };
 
   const loginOrSignup = async () => {
-    setloading(true);
+    setLoading(true);
+    setError("");
 
     if (!email || !password) {
-      seterror("Please fill all the fields");
-      setloading(false);
+      setError("Please fill all the fields");
+      setLoading(false);
       return;
     }
     if (mode === "signup" && password !== confirmPassword) {
-      seterror("Passwords do not match");
-      setloading(false);
+      setError("Passwords do not match");
+      setLoading(false);
       return;
     }
 
-    const endpoint = mode === "signup" ? "/users/register" : "/users/login";
     try {
+      const endpoint = mode === "signup" ? "/users/register" : "/users/login";
       const res = await axios.post(
         `${API_URL}${endpoint}`,
-        {
-          email,
-          password,
-          name,
-        },
-        {
-          withCredentials: true,
-        }
+        { email, password, name },
+        { withCredentials: true }
       );
 
-      const data = res.data;
-      setloading(false);
-
-      if (
-        data.message === "User registered successfully" ||
-        data.message === "Logged in successfully"
-      ) {
-        if (data.user) setuser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
+      if (res.data.user) {
+        setuser(res.data.user);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
         navigate("/home");
-      } else if (data.message === "Login successful") {
-        navigate("/home");
-      } else {
-        seterror("Registration failed");
       }
     } catch (error) {
-      setloading(false);
-      console.log("Full error object:", error);
-      console.log("Error response:", error.response);
-      console.log("Error request:", error.request);
-
-      if (error.response) {
-        console.log("Error status:", error.response.status);
-        console.log("Error data:", error.response.data);
-        seterror(error.response.data.detail || "Something went wrong");
-      } else if (error.request) {
-        console.log("No response received");
-        seterror("No response from server");
-      } else {
-        console.log("Error message:", error.message);
-        seterror("Something went wrong");
-      }
+      setError(error.response?.data?.detail || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      <div className="min-h-screen flex flex-col lg:flex-row">
-        <div className="hidden lg:flex lg:w-1/2 bg-blue-600 p-12 items-center justify-center relative overflow-hidden">
-          <div className="relative z-10 text-white max-w-lg">
-            <h1 className="text-4xl font-bold mb-6">Welcome to OnCode</h1>
-            <p className="text-blue-100 text-lg mb-8">
-              Join our community and save your codes!!!
-            </p>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  ✓
-                </div>
-                <span>Easy to access</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  ✓
-                </div>
-                <span>fast</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  ✓
-                </div>
-                <span>one time notes</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  ✓
-                </div>
-                <span>Regular Updates</span>
-              </div>
-            </div>
+    <div
+      className={`min-h-screen ${
+        isDarkMode
+          ? "bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800 text-white"
+          : "bg-gradient-to-br from-blue-400 via-cyan-400 to-teal-400 text-gray-900"
+      }`}
+    >
+      <div className="container mx-auto px-4 py-8">
+        <header className="flex justify-between items-center mb-12">
+          <h1 className="text-3xl font-bold text-dark-600 dark:text-white">
+            oncomp
+          </h1>
+          <div className="flex justify-center items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className={`p-3 theme-toggle hover:rotate-180 rounded-full shadow-lg transition-all duration-300 ${
+                isDarkMode
+                  ? "bg-yellow-400 text-gray-900"
+                  : "bg-indigo-600 text-white"
+              }`}
+            >
+              {isDarkMode ? (
+                <SunIcon size={24} className="w-5 h-5" />
+              ) : (
+                <MoonIcon size={24} className="w-5 h-5" />
+              )}
+            </button>
+            <Link to={"/"}>
+              <Home className="text-3xl font-bold text-dark-600 dark:text-white" />
+            </Link>
           </div>
+        </header>
 
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full filter blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full filter blur-3xl transform translate-x-1/2 translate-y-1/2"></div>
-          </div>
-        </div>
-
-        {/* Form Side */}
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl space-y-8">
-            <div className="text-center">
-              <div className="flex justify-center mb-4">
-                <UserCircle2 className="h-12 w-12 text-blue-600" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900">
-                {mode === "signup" ? "Create your account" : "Welcome back"}
-              </h2>
-              <p className="mt-2 text-gray-600">
-                {mode === "signup"
-                  ? "Start your journey"
-                  : "Sign in to continue"}
-              </p>
-            </div>
+        <div
+          className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent 
+          transition-all duration-300 hover:shadow-2xl p-6 max-w-md mx-auto
+          ${
+            isDarkMode
+              ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+              : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+          }`}
+        >
+          <div className="p-8">
+            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800 dark:text-white">
+              {mode === "signup" ? "Create Account" : "Welcome Back"}
+            </h2>
 
             <div className="space-y-6">
               {mode === "signup" && (
-                <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Name
-                  </label>
-                  <div className="mt-1 relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <User className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Monkey D. Luffy"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                    />
-                  </div>
+                <div className="relative">
+                  <UserIcon
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={`w-full pl-10 pr-4 py-2 rounded-lg outline-none 
+                      bg-white bg-opacity-20 backdrop-blur-lg border border-transparent
+                      focus:border-white focus:border-opacity-30
+                      ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                  />
                 </div>
               )}
 
-              <div>
-                <label className="text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <div className="mt-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  />
-                </div>
+              <div className="relative">
+                <MailIcon
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-2 rounded-lg outline-none 
+                    bg-white bg-opacity-20 backdrop-blur-lg border border-transparent
+                    focus:border-white focus:border-opacity-30
+                    ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                />
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <div className="mt-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  />
-                </div>
+              <div className="relative">
+                <LockIcon
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-2 rounded-lg outline-none 
+                    bg-white bg-opacity-20 backdrop-blur-lg border border-transparent
+                    focus:border-white focus:border-opacity-30
+                    ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                />
               </div>
 
               {mode === "signup" && (
-                <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Confirm Password
-                  </label>
-                  <div className="mt-1 relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="password"
-                      placeholder="••••••••"
-                      value={confirmPassword}
-                      onChange={(e) => setconfirmPassword(e.target.value)}
-                      className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                    />
-                  </div>
+                <div className="relative">
+                  <LockIcon
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
+                  <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={`w-full pl-10 pr-4 py-2 rounded-lg outline-none 
+                      bg-white bg-opacity-20 backdrop-blur-lg border border-transparent
+                      focus:border-white focus:border-opacity-30
+                      ${isDarkMode ? "text-white" : "text-gray-900"}`}
+                  />
                 </div>
               )}
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg text-sm">
+                <div className="bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-200 p-3 rounded-lg text-sm">
                   {error}
                 </div>
               )}
@@ -226,61 +199,30 @@ export default function Loginc() {
               <button
                 onClick={loginOrSignup}
                 disabled={loading}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 {loading ? (
-                  <span className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                      ></path>
-                    </svg>
-                    Loading...
-                  </span>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <span className="flex items-center">
-                    {mode === "signup" ? "Sign Up" : "Log In"}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </span>
+                  <>
+                    <span>{mode === "signup" ? "Sign Up" : "Log In"}</span>
+                    <ArrowRightIcon size={20} />
+                  </>
                 )}
               </button>
 
               <div className="text-center">
                 <button
                   onClick={() =>
-                    setmode((prev) => (prev === "signup" ? "login" : "signup"))
+                    setMode(mode === "signup" ? "login" : "signup")
                   }
-                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   {mode === "signup"
-                    ? "Already have an account? Log in"
-                    : "Need an account? Sign up"}
+                    ? "Already have an account?"
+                    : "Need an account?"}
                 </button>
               </div>
-
-              {user && (
-                <Link
-                  to="/home"
-                  className="block text-center mt-4 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Return to Home
-                </Link>
-              )}
             </div>
           </div>
         </div>

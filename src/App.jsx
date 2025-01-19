@@ -51,8 +51,6 @@ export default function App() {
       const payload = {
         code: btoa(encodeURIComponent(code)),
         language: language.toLowerCase(),
-        // testcase: btoa(encodeURIComponent(testCase)),
-        // testcode: btoa(encodeURIComponent(testCode)),
       };
 
       const response = await axios.post("http://localhost:3000/", payload, {
@@ -88,77 +86,146 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <div className="container mx-auto p-4">
-        <Split className="flex" sizes={[50, 50]}>
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden flex flex-col">
-            <div className="bg-gray-100 dark:bg-gray-700 p-4 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                Code Input
-              </h2>
-              <button
-                onClick={handleSubmit}
-                disabled={isLoading}
-                className=" bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300 dark:disabled:bg-blue-800"
-              >
-                {isLoading ? "Running..." : "Run Code"}
-              </button>
-              <div className="flex items-center space-x-4">
+    <div
+      className={`min-h-screen transition-all duration-500 ${
+        isDarkMode
+          ? "bg-gradient-to-br from-gray-900 via-purple-900 to-violet-800 text-white"
+          : "bg-gradient-to-br from-blue-400 via-cyan-400 to-teal-400 text-gray-900"
+      }`}
+    >
+      <div className="container min-w-full p-2 sm:p-4">
+        <Split
+          className="flex flex-col lg:flex-row gap-4 lg:gap-2"
+          sizes={[50, 50]}
+          direction="horizontal"
+          gutterSize={8}
+        >
+          <div
+            className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent flex flex-col
+              ${
+                isDarkMode
+                  ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                  : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+              }`}
+          >
+            <div className="p-2 sm:p-4 space-y-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-xl font-bold">Code Input</h2>
+                <button
+                  onClick={handleSubmit}
+                  disabled={isLoading}
+                  className={`w-full sm:w-auto px-4 py-2 rounded-lg transition-all duration-300
+                    ${
+                      isDarkMode
+                        ? "bg-violet-600 hover:bg-violet-700 disabled:bg-violet-800"
+                        : "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400"
+                    } text-white`}
+                >
+                  {isLoading ? "Running..." : "Run Code"}
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                 <button
                   onClick={toggleDarkMode}
-                  className="p-2 rounded-lg bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                  className={`p-3  w-fit rounded-full shadow-lg transition-all duration-300 ${
+                    isDarkMode
+                      ? "bg-yellow-400 text-gray-900"
+                      : "bg-indigo-600 text-white"
+                  }`}
                 >
                   {isDarkMode ? (
-                    <Sun className="w-5 h-5 text-yellow-500" />
+                    <Sun className="max-w-5 h-5" />
                   ) : (
-                    <Moon className="w-5 h-5 text-gray-700" />
+                    <Moon className="w-5 h-5" />
                   )}
                 </button>
+
                 <Link
-                  className="text-white bg-blue-600 flex justify-center items-center hover:bg-blue-700 px-4 py-2 rounded-lg"
-                  to={"/"}
+                  to="/"
+                  className={`px-4 py-2 rounded-lg text-center transition-all duration-300
+                    backdrop-blur-lg border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:bg-opacity-20"
+                        : "bg-white bg-opacity-20 hover:bg-opacity-30"
+                    }`}
                 >
                   Home
                 </Link>
+
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className={`px-4 py-2 rounded-lg outline-none
+                    transition-all duration-300 backdrop-blur-lg border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:bg-opacity-20"
+                        : "bg-white bg-opacity-20 hover:bg-opacity-30"
+                    }`}
                 >
                   {LANGUAGES.map((lang) => (
-                    <option key={lang.value} value={lang.value}>
+                    <option
+                      className={`text-black ${
+                        isDarkMode
+                          ? "bg-purple-500 bg-opacity-10 hover:bg-opacity-20"
+                          : "bg-teal-100 bg-opacity-20 hover:bg-opacity-30"
+                      } `}
+                      key={lang.value}
+                      value={lang.value}
+                    >
                       {lang.label}
                     </option>
                   ))}
                 </select>
+
                 <button
                   onClick={() => setCode(CODE_TEMPLATES[language])}
-                  className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 px-2 py-1 rounded text-gray-700 dark:text-gray-200"
+                  className={`px-4 py-2 rounded-lg transition-all duration-300
+                    backdrop-blur-lg border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:bg-opacity-20"
+                        : "bg-white bg-opacity-20 hover:bg-opacity-30"
+                    }`}
                 >
                   Template
                 </button>
               </div>
             </div>
 
-            <div className="flex border-b dark:border-gray-700">
+            {/* Tabs */}
+            <div className="flex border-b border-white border-opacity-20">
               {["code", "testcase", "testcode"].map((tab) => (
                 <button
                   key={tab}
-                  className={`px-4 py-2 flex-1 ${
-                    activeTab === tab
-                      ? "bg-blue-100 dark:bg-blue-900 border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
                   onClick={() => setActiveTab(tab)}
+                  className={`flex-1 px-2 sm:px-6 py-3 text-sm sm:text-base transition-all duration-300
+                    ${
+                      activeTab === tab
+                        ? isDarkMode
+                          ? "bg-white bg-opacity-10 border-b-2 border-white"
+                          : "bg-white bg-opacity-30 border-b-2 border-white"
+                        : "hover:bg-white hover:bg-opacity-10"
+                    }`}
                 >
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </button>
               ))}
             </div>
 
-            <div className="p-4 flex-grow overflow-auto dark:bg-gray-800">
+            {/* Editor Area */}
+            <div className="p-2 sm:p-6 flex-grow overflow-auto">
               {activeTab === "code" && (
-                <div className="w-full h-full p-2 border rounded font-mono resize-none dark:border-gray-700">
+                <div
+                  className={`w-full h-full rounded-lg overflow-hidden border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-5"
+                        : "bg-white bg-opacity-10"
+                    }`}
+                >
                   <CodeEditor
                     handle_change={(e) => setCode(e)}
                     value={code}
@@ -177,29 +244,42 @@ export default function App() {
               )}
               {activeTab === "testcode" && (
                 <CodeEditor
-                  value={testCode}
                   handle_change={(e) => setTestCode(e)}
+                  value={testCode}
                   launguage={language}
                   theme={isDarkMode ? "vs-dark" : "light"}
                 />
               )}
             </div>
-
-            <div className="p-4 dark:bg-gray-800"></div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden flex flex-col">
-            <div className="bg-gray-100 dark:bg-gray-700 p-4">
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                Output
-              </h2>
+          {/* Output Panel */}
+          <div
+            className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent flex flex-col
+              ${
+                isDarkMode
+                  ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                  : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+              }`}
+          >
+            <div
+              className={`p-2 sm:p-4 ${
+                isDarkMode ? "bg-white bg-opacity-10" : "bg-white bg-opacity-20"
+              }`}
+            >
+              <h2 className="text-xl font-bold">Output</h2>
             </div>
-            <div className="p-4 flex-grow overflow-auto">
+            <div className="p-2 sm:p-6 flex-grow overflow-auto">
               <textarea
                 value={output}
                 readOnly
                 placeholder="Output will appear here..."
-                className="w-full h-full p-2 border rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white resize-none"
+                className={`w-full h-full p-4 rounded-lg outline-none resize-none
+                  ${
+                    isDarkMode
+                      ? "bg-white bg-opacity-5"
+                      : "bg-white bg-opacity-10"
+                  }`}
               />
             </div>
           </div>

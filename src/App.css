@@ -15,4 +15,5 @@
 .gutter.gutter-vertical {
   background-image: url("horizontal.png");
   cursor: row-resize;
+  max-width: 100%;
 }

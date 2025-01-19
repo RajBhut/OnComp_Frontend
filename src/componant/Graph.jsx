@@ -17,7 +17,8 @@ import "@xyflow/react/dist/style.css";
 import { Graphcontext } from "./GraphProvider";
 
 import { useParams } from "react-router-dom";
-
+import { LucideSpline, Plus, Save, Trash } from "lucide-react";
+const API_URL = import.meta.env.VITE_API_URL;
 const complexityColors = {
   O1: "bg-green-100 border-green-500",
   ON: "bg-yellow-100 border-yellow-500",
@@ -56,7 +57,7 @@ const connectionTypes = {
 const CustomNode = ({ data, isConnectable }) => {
   return (
     <div
-      className={`px-4 py-2 shadow-lg rounded-md bg-white border-2 ${data.complexityClass} min-w-[200px] relative`}
+      className={`px-4 py-2 shadow-lg rounded-md text-black bg-white border-2 ${data.complexityClass} min-w-[200px] relative`}
     >
       <Handle
         type="target"
@@ -66,7 +67,7 @@ const CustomNode = ({ data, isConnectable }) => {
       />
       <div className="font-bold">{data.label}</div>
       {data.stepNumber && (
-        <div className="absolute -left-3 -top-3 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
+        <div className="absolute -left-3 -top-3 bg-blue-500  rounded-full w-6 h-6 flex items-center justify-center text-sm">
           {data.stepNumber}
         </div>
       )}
@@ -147,7 +148,7 @@ export default function Graph({ InEdge, InNode }) {
   const send_notes = async () => {
     try {
       const res = await axios.post(
-        `http://localhost:8000/problem/update/${id}`,
+        `${API_URL}/problem/update/${id}`,
         {
           edge: JSON.stringify(edges),
           node: JSON.stringify(nodes),
@@ -249,44 +250,46 @@ export default function Graph({ InEdge, InNode }) {
         >
           <div className="space-y-4">
             {!showForm && !showConnectionMenu && (
-              <div className="flex gap-2 justify-center items-center flex-col   space-x-2">
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="bg-blue-500 text-white w-full px-4 py-2 rounded hover:bg-blue-600"
-                >
-                  Add Solution Step
-                </button>
-                <button
-                  onClick={() => setShowConnectionMenu(true)}
-                  className="bg-green-500 text-white px-4 w-full py-2 rounded hover:bg-green-600"
-                >
-                  Connection Types
-                </button>
-                <button
-                  onClick={deleteSelectedNodes}
-                  className="bg-red-500 text-white px-4 py-2 w-full rounded hover:bg-red-600"
-                >
-                  Delete Selected
-                </button>
-                <button
-                  className="bg-gray-500 text-white px-4 py-2 w-full rounded hover:bg-gray-600"
-                  onClick={() => {
-                    setGraphdata(nodes);
-                    localStorage.setItem("graph", JSON.stringify(nodes));
+              <>
+                <div className="flex flex-col gap-2 justify-center items-center   space-x-1">
+                  <button
+                    onClick={() => setShowForm(true)}
+                    className="bg-blue-500 text-white w-fir px-2 py-2 rounded hover:bg-blue-600"
+                  >
+                    <Plus />
+                  </button>
+                  <button
+                    onClick={() => setShowConnectionMenu(true)}
+                    className="bg-green-500 text-white px-2 w-fir py-2 rounded hover:bg-green-600"
+                  >
+                    <LucideSpline />
+                  </button>
+                  <button
+                    onClick={deleteSelectedNodes}
+                    className="bg-red-500 text-white  py-2 px-2 w-fit rounded hover:bg-red-600"
+                  >
+                    <Trash />
+                  </button>
+                  <button
+                    className="bg-gray-500 w-fit  text-white flex items-center justify-center py-2 px-2 rounded hover:bg-gray-600"
+                    onClick={() => {
+                      setGraphdata(nodes);
+                      localStorage.setItem("graph", JSON.stringify(nodes));
 
-                    setEdgedata(edges);
-                    localStorage.setItem("edge", JSON.stringify(edges));
+                      setEdgedata(edges);
+                      localStorage.setItem("edge", JSON.stringify(edges));
 
-                    send_notes();
-                  }}
-                >
-                  Save
-                </button>
-              </div>
+                      send_notes();
+                    }}
+                  >
+                    <Save className="" />
+                  </button>
+                </div>
+              </>
             )}
 
             {showConnectionMenu && (
-              <div className="space-y-4">
+              <div className="space-y-4 text-black">
                 <h3 className="font-bold">Select Connection Type</h3>
                 <div className="space-y-2">
                   {Object.entries(connectionTypes).map(([key, value]) => (
@@ -323,7 +326,7 @@ export default function Graph({ InEdge, InNode }) {
 
             {showForm && (
               <div className="space-y-4 max-w-md">
-                <div className="space-y-2">
+                <div className="space-y-2 text-black">
                   <input
                     type="text"
                     name="label"
