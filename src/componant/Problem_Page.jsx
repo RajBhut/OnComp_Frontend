@@ -23,11 +23,12 @@ export default function Problem_Page() {
   const [output, setOutput] = useState("");
   const [language, setLanguage] = useState("python");
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("code");
+  const [active, setActiveTab] = useState("code");
   const location = useLocation();
   const { id } = useParams();
   const [fetched_data, setfetched_data] = useState([]);
   const navigator = useNavigate();
+  const [activeLeftTab, setActiveLeftTab] = useState("description");
   const markdownExample = `
 # Test
 ### Example
@@ -241,53 +242,40 @@ export default function Problem_Page() {
       <div className="container mx-auto min-w-full">
         <Split className="flex" sizes={[40, 60]}>
           <div className="flex-col w-full pr-2">
-            <Split
-              direction="vertical"
-              sizes={[90, 10]}
-              minSize={100}
-              className="gutter-vertical flex flex-col"
-              style={{ height: "calc(100vh - 2rem)" }}
+            <div
+              className={`h-full flex flex-col rounded-lg shadow-xl backdrop-blur-lg border border-transparent
+              ${
+                isDarkMode
+                  ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                  : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+              }`}
             >
-              <div
-                className={`flex flex-col rounded-lg shadow-xl backdrop-blur-lg border border-transparent
-                ${
-                  isDarkMode
-                    ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
-                    : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
-                }`}
-              >
-                <div
-                  className={`p-4 ${
-                    isDarkMode
-                      ? "bg-white bg-opacity-10"
-                      : "bg-white bg-opacity-20"
-                  }`}
-                >
-                  <h2 className="text-lg font-bold">Description</h2>
-                </div>
-                <div className="prose w-full mb-5 p-4 text-xs prose-sm md:prose-base lg:prose-lg dark:prose-invert overflow-auto">
-                  <ReactMarkdown>{description}</ReactMarkdown>
-                </div>
+              <div className="flex border-b border-white border-opacity-20">
+                {["description", "output"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveLeftTab(tab)}
+                    className={`flex-1 px-6 py-3 transition-all duration-300
+                      ${
+                        activeLeftTab === tab
+                          ? isDarkMode
+                            ? "bg-white bg-opacity-10 border-b-2 border-white"
+                            : "bg-white bg-opacity-30 border-b-2 border-white"
+                          : "hover:bg-white hover:bg-opacity-10"
+                      }`}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
               </div>
 
-              <div
-                className={`flex font-mono flex-col rounded-lg shadow-xl backdrop-blur-lg border border-transparent mt-4
-                ${
-                  isDarkMode
-                    ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
-                    : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
-                }`}
-              >
-                <div
-                  className={`p-4 ${
-                    isDarkMode
-                      ? "bg-white bg-opacity-10"
-                      : "bg-white bg-opacity-20"
-                  }`}
-                >
-                  <h2 className="text-lg font-bold">Output</h2>
-                </div>
-                <div className="flex-1 p-4 overflow-hidden">
+              <div className="flex-grow p-4 overflow-auto">
+                {activeLeftTab === "description" && (
+                  <div className="prose w-full h-full dark:prose-invert">
+                    <ReactMarkdown>{description}</ReactMarkdown>
+                  </div>
+                )}
+                {activeLeftTab === "output" && (
                   <textarea
                     value={output}
                     readOnly
@@ -299,9 +287,9 @@ export default function Problem_Page() {
                           : "bg-white bg-opacity-10"
                       }`}
                   />
-                </div>
+                )}
               </div>
-            </Split>
+            </div>
           </div>
 
           <div
@@ -315,20 +303,20 @@ export default function Problem_Page() {
             <div className="p-4 flex justify-between items-center">
               <h2 className="text-xl font-bold">Code Input</h2>
 
-              <button
-                onClick={handleSubmit}
-                disabled={isLoading}
-                className={`px-4 py-2 rounded-lg transition-all duration-300
-                  ${
-                    isDarkMode
-                      ? "bg-violet-600 hover:bg-violet-700 disabled:bg-violet-800"
-                      : "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400"
-                  } text-white`}
-              >
-                {isLoading ? "Running..." : "Run"}
-              </button>
-
               <div className="flex items-center gap-4">
+                <button
+                  onClick={handleSubmit}
+                  disabled={isLoading}
+                  className={`px-4 py-2 rounded-lg transition-all duration-300
+                    ${
+                      isDarkMode
+                        ? "bg-violet-600 hover:bg-violet-700 disabled:bg-violet-800"
+                        : "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400"
+                    } text-white`}
+                >
+                  {isLoading ? "Running..." : "Run"}
+                </button>
+
                 <button
                   onClick={toggleDarkMode}
                   className={`p-3 rounded-full shadow-lg transition-all duration-300 ${
@@ -370,13 +358,9 @@ export default function Problem_Page() {
                 >
                   {LANGUAGES.map((lang) => (
                     <option
-                      className={`text-black ${
-                        isDarkMode
-                          ? "bg-purple-500 bg-opacity-10 hover:bg-opacity-20"
-                          : "bg-teal-100 bg-opacity-20 hover:bg-opacity-30"
-                      } `}
                       key={lang.value}
                       value={lang.value}
+                      className="text-black"
                     >
                       {lang.label}
                     </option>
@@ -398,6 +382,7 @@ export default function Problem_Page() {
               </div>
             </div>
 
+            {/* Right Panel Tabs */}
             <div className="flex border-b border-white border-opacity-20">
               {["code", "testcase", "note"].map((tab) => (
                 <button
@@ -405,7 +390,7 @@ export default function Problem_Page() {
                   onClick={() => setActiveTab(tab)}
                   className={`flex-1 px-6 py-3 transition-all duration-300
                     ${
-                      activeTab === tab
+                      active === tab
                         ? isDarkMode
                           ? "bg-white bg-opacity-10 border-b-2 border-white"
                           : "bg-white bg-opacity-30 border-b-2 border-white"
@@ -417,8 +402,9 @@ export default function Problem_Page() {
               ))}
             </div>
 
+            {/* Right Panel Content */}
             <div className="p-6 flex-grow overflow-auto">
-              {activeTab === "code" && (
+              {active === "code" && (
                 <div
                   className={`w-full h-full rounded-lg overflow-hidden border border-transparent
                   ${
@@ -435,7 +421,7 @@ export default function Problem_Page() {
                   />
                 </div>
               )}
-              {activeTab === "testcase" && (
+              {active === "testcase" && (
                 <CodeEditor
                   handle_change={(e) => setTestCase(e)}
                   value={testCase}
@@ -443,9 +429,9 @@ export default function Problem_Page() {
                   theme={isDarkMode ? "vs-dark" : "light"}
                 />
               )}
-              {activeTab === "note" && (
+              {active === "note" && (
                 <GraphProvider>
-                  <Graph InEdge={Edgedata} InNode={Graphdata} />
+                  <Graph InEdge={[]} InNode={[]} />
                 </GraphProvider>
               )}
             </div>
