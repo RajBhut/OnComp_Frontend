@@ -14,6 +14,8 @@ export default function App() {
   const [language, setLanguage] = useState("python");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("code");
+  const CODE_API_URL = import.meta.env.VITE_CODE_API_URL;
+
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("darkMode") === "true";
@@ -40,7 +42,6 @@ export default function App() {
     { value: "java", label: "Java" },
     { value: "cpp", label: "C++" },
   ];
-
   const handleSubmit = async () => {
     if (!code.trim()) {
       alert("Please enter some code");
@@ -53,7 +54,7 @@ export default function App() {
         language: language.toLowerCase(),
       };
 
-      const response = await axios.post("http://localhost:3000/", payload, {
+      const response = await axios.post(`${CODE_API_URL}/`, payload, {
         headers: { "Content-Type": "application/json" },
         withCredentials: false,
       });
