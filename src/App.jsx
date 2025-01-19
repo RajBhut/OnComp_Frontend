@@ -81,8 +81,8 @@ export default function App() {
 
   const CODE_TEMPLATES = {
     javascript: `function solution() {\n  // Your code here\n}`,
-    python: `class Solution():\n    # Your code here\n    pass`,
-    java: `public class Solution {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}`,
+    python: `class Run():\n    # Your code here\n    pass`,
+    java: `public class Run {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}`,
     cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Your code here\n    return 0;\n}`,
   };
 
