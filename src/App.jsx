@@ -198,7 +198,7 @@ export default function App() {
 
             {/* Tabs */}
             <div className="flex border-b border-white border-opacity-20">
-              {["code", "testcase", "testcode"].map((tab) => (
+              {["code"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
