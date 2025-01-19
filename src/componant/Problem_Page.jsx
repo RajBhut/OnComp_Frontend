@@ -250,7 +250,7 @@ export default function Problem_Page() {
                   : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
               }`}
             >
-              <div className="flex border-b border-white border-opacity-20">
+              <div className="flex  border-b border-white border-opacity-20">
                 {["description", "output"].map((tab) => (
                   <button
                     key={tab}
@@ -269,9 +269,9 @@ export default function Problem_Page() {
                 ))}
               </div>
 
-              <div className="flex-grow p-4 overflow-auto">
+              <div className="flex-grow p-4  overflow-auto">
                 {activeLeftTab === "description" && (
-                  <div className="prose w-full h-full dark:prose-invert">
+                  <div className="prose w-full max-h-[100vh] overflow-y-scroll dark:prose-invert">
                     <ReactMarkdown>{description}</ReactMarkdown>
                   </div>
                 )}
