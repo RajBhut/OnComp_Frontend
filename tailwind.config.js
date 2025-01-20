@@ -9,11 +9,13 @@ module.exports = {
           css: {
             maxWidth: "none",
             code: {
-              backgroundColor: "hwb(59 28% 2% / 0.463)",
-              padding: "2px 4px",
-              borderRadius: "4px",
+              backgroundColor: "#1e293b",
+              color: "#f8fafc",
+              padding: "4px 6px",
+              borderRadius: "6px",
               fontSize: "0.875em",
             },
+
             "code::before": {
               content: '""',
             },

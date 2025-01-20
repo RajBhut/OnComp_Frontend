@@ -9,7 +9,10 @@ import { Home, Moon, Sun } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import Graph from "./Graph";
 import GraphProvider, { Graphcontext } from "./GraphProvider";
+import { useMediaQuery } from "react-responsive";
 export default function Problem_Page() {
+  const isBigScreen = useMediaQuery({ query: "(min-width: 1024px)" });
+
   const API_URL = import.meta.env.VITE_API_URL;
   const CODE_API_URL = import.meta.env.VITE_CODE_API_URL;
   const { Graphdata, setGraphdata, Edgedata, setEdgedata } =
@@ -116,7 +119,7 @@ export default function Problem_Page() {
       }
     } catch (error) {
       console.error("Error fetching problem data:", error);
-      navigator("/");
+      navigator("/login");
     }
   };
 
@@ -240,22 +243,23 @@ export default function Problem_Page() {
       }`}
     >
       <div className="container mx-auto min-w-full">
-        <Split className="flex" sizes={[40, 60]}>
-          <div className="flex-col w-full pr-2">
-            <div
-              className={`h-full flex flex-col rounded-lg shadow-xl backdrop-blur-lg border border-transparent
+        {isBigScreen ? (
+          <Split className="flex" sizes={[40, 60]}>
+            <div className="flex-col w-full pr-2">
+              <div
+                className={`h-full flex flex-col rounded-lg shadow-xl backdrop-blur-lg border border-transparent
               ${
                 isDarkMode
                   ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
                   : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
               }`}
-            >
-              <div className="flex  border-b border-white border-opacity-20">
-                {["description", "output"].map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveLeftTab(tab)}
-                    className={`flex-1 px-6 py-3 transition-all duration-300
+              >
+                <div className="flex  border-b border-white border-opacity-20">
+                  {["description", "output"].map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveLeftTab(tab)}
+                      className={`flex-1 px-6 py-3 transition-all duration-300
                       ${
                         activeLeftTab === tab
                           ? isDarkMode
@@ -263,132 +267,141 @@ export default function Problem_Page() {
                             : "bg-white bg-opacity-30 border-b-2 border-white"
                           : "hover:bg-white hover:bg-opacity-10"
                       }`}
-                  >
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  </button>
-                ))}
-              </div>
+                    >
+                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </button>
+                  ))}
+                </div>
 
-              <div className="flex-grow p-4  overflow-auto">
-                {activeLeftTab === "description" && (
-                  <div className="prose w-full max-h-[100vh] overflow-y-scroll dark:prose-invert">
-                    <ReactMarkdown>{description}</ReactMarkdown>
-                  </div>
-                )}
-                {activeLeftTab === "output" && (
-                  <textarea
-                    value={output}
-                    readOnly
-                    placeholder="Output will appear here..."
-                    className={`w-full h-full p-2 rounded-lg outline-none resize-none
+                <div
+                  className={`flex-grow p-4  overflow-auto    ${
+                    isDarkMode ? "bg-gray-600 " : " bg-white "
+                  }`}
+                >
+                  {activeLeftTab === "description" && (
+                    <div className="prose w-full max-h-[100vh] overflow-y-scroll dark:prose-invert">
+                      {isLoading ? (
+                        <div className="flex justify-center items-center h-96">
+                          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+                        </div>
+                      ) : (
+                        <ReactMarkdown>{description}</ReactMarkdown>
+                      )}
+                    </div>
+                  )}
+                  {activeLeftTab === "output" && (
+                    <textarea
+                      value={output}
+                      readOnly
+                      placeholder="Output will appear here..."
+                      className={`w-full h-full p-2 rounded-lg outline-none resize-none
                       ${
                         isDarkMode
                           ? "bg-white bg-opacity-5"
                           : "bg-white bg-opacity-10"
                       }`}
-                  />
-                )}
+                    />
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div
-            className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent flex flex-col
+            <div
+              className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent flex flex-col
             ${
               isDarkMode
                 ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
                 : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
             }`}
-          >
-            <div className="p-4 flex justify-between items-center">
-              <h2 className="text-xl font-bold">Code Input</h2>
+            >
+              <div className="p-4 flex justify-between items-center">
+                <h2 className="text-xl font-bold">Code Input</h2>
 
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                  className={`px-4 py-2 rounded-lg transition-all duration-300
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-lg transition-all duration-300
                     ${
                       isDarkMode
                         ? "bg-violet-600 hover:bg-violet-700 disabled:bg-violet-800"
                         : "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400"
                     } text-white`}
-                >
-                  {isLoading ? "Running..." : "Run"}
-                </button>
+                  >
+                    {isLoading ? "Running..." : "Run"}
+                  </button>
 
-                <button
-                  onClick={toggleDarkMode}
-                  className={`p-3 rounded-full shadow-lg transition-all duration-300 ${
-                    isDarkMode
-                      ? "bg-yellow-400 text-gray-900"
-                      : "bg-indigo-600 text-white"
-                  }`}
-                >
-                  {isDarkMode ? (
-                    <Sun className="w-5 h-5" />
-                  ) : (
-                    <Moon className="w-5 h-5" />
-                  )}
-                </button>
+                  <button
+                    onClick={toggleDarkMode}
+                    className={`p-3 rounded-full shadow-lg transition-all duration-300 ${
+                      isDarkMode
+                        ? "bg-yellow-400 text-gray-900"
+                        : "bg-indigo-600 text-white"
+                    }`}
+                  >
+                    {isDarkMode ? (
+                      <Sun className="w-5 h-5" />
+                    ) : (
+                      <Moon className="w-5 h-5" />
+                    )}
+                  </button>
 
-                <Link
-                  to="/"
-                  className={`p-3 rounded-lg transition-all duration-300
+                  <Link
+                    to="/home"
+                    className={`p-3 rounded-lg transition-all duration-300
                     backdrop-blur-lg border border-transparent
                     ${
                       isDarkMode
                         ? "bg-white bg-opacity-10 hover:bg-opacity-20"
                         : "bg-white bg-opacity-20 hover:bg-opacity-30"
                     }`}
-                >
-                  <Home className="w-5 h-5" />
-                </Link>
+                  >
+                    <Home className="w-5 h-5" />
+                  </Link>
 
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className={`px-4 py-2 rounded-lg outline-none
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className={`px-4 py-2 rounded-lg outline-none
                     transition-all duration-300 backdrop-blur-lg border border-transparent
                     ${
                       isDarkMode
                         ? "bg-white bg-opacity-10 hover:bg-opacity-20"
                         : "bg-white bg-opacity-20 hover:bg-opacity-30"
                     }`}
-                >
-                  {LANGUAGES.map((lang) => (
-                    <option
-                      key={lang.value}
-                      value={lang.value}
-                      className="text-black"
-                    >
-                      {lang.label}
-                    </option>
-                  ))}
-                </select>
+                  >
+                    {LANGUAGES.map((lang) => (
+                      <option
+                        key={lang.value}
+                        value={lang.value}
+                        className="text-black"
+                      >
+                        {lang.label}
+                      </option>
+                    ))}
+                  </select>
 
-                <button
-                  onClick={() => setCode(CODE_TEMPLATES[language])}
-                  className={`px-4 py-2 rounded-lg transition-all duration-300
+                  <button
+                    onClick={() => setCode(CODE_TEMPLATES[language])}
+                    className={`px-4 py-2 rounded-lg transition-all duration-300
                     backdrop-blur-lg border border-transparent
                     ${
                       isDarkMode
                         ? "bg-white bg-opacity-10 hover:bg-opacity-20"
                         : "bg-white bg-opacity-20 hover:bg-opacity-30"
                     }`}
-                >
-                  Template
-                </button>
+                  >
+                    Template
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Right Panel Tabs */}
-            <div className="flex border-b border-white border-opacity-20">
-              {["code", "testcase", "note"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`flex-1 px-6 py-3 transition-all duration-300
+              <div className="flex border-b border-white border-opacity-20">
+                {["code", "testcase", "note"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`flex-1 px-6 py-3 transition-all duration-300
                     ${
                       active === tab
                         ? isDarkMode
@@ -396,47 +409,250 @@ export default function Problem_Page() {
                           : "bg-white bg-opacity-30 border-b-2 border-white"
                         : "hover:bg-white hover:bg-opacity-10"
                     }`}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-              ))}
-            </div>
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+              </div>
 
-            {/* Right Panel Content */}
-            <div className="p-6 flex-grow overflow-auto">
-              {active === "code" && (
-                <div
-                  className={`w-full h-full rounded-lg overflow-hidden border border-transparent
+              {/* Right Panel Content */}
+              <div className="p-6 flex-grow overflow-auto">
+                {active === "code" && (
+                  <div
+                    className={`w-full h-full rounded-lg overflow-hidden border border-transparent
                   ${
                     isDarkMode
                       ? "bg-white bg-opacity-5"
                       : "bg-white bg-opacity-10"
                   }`}
-                >
+                  >
+                    <CodeEditor
+                      handle_change={(e) => setCode(e)}
+                      value={code}
+                      launguage={language}
+                      theme={isDarkMode ? "vs-dark" : "light"}
+                    />
+                  </div>
+                )}
+                {active === "testcase" && (
                   <CodeEditor
-                    handle_change={(e) => setCode(e)}
-                    value={code}
+                    handle_change={(e) => setTestCase(e)}
+                    value={testCase}
                     launguage={language}
                     theme={isDarkMode ? "vs-dark" : "light"}
                   />
+                )}
+                {active === "note" && (
+                  <GraphProvider>
+                    <Graph InEdge={[]} InNode={[]} />
+                  </GraphProvider>
+                )}
+              </div>
+            </div>
+          </Split>
+        ) : (
+          <div className="flex flex-col">
+            <div className="flex-col w-full pr-2">
+              <div
+                className={`h-full flex flex-col rounded-lg shadow-xl backdrop-blur-lg border border-transparent
+              ${
+                isDarkMode
+                  ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                  : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+              }`}
+              >
+                <div className="flex  border-b border-white border-opacity-20">
+                  {["description", "output"].map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveLeftTab(tab)}
+                      className={`flex-1 px-6 py-3 transition-all duration-300
+                      ${
+                        activeLeftTab === tab
+                          ? isDarkMode
+                            ? "bg-white bg-opacity-10 border-b-2 border-white"
+                            : "bg-white bg-opacity-30 border-b-2 border-white"
+                          : "hover:bg-white hover:bg-opacity-10"
+                      }`}
+                    >
+                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </button>
+                  ))}
                 </div>
-              )}
-              {active === "testcase" && (
-                <CodeEditor
-                  handle_change={(e) => setTestCase(e)}
-                  value={testCase}
-                  launguage={language}
-                  theme={isDarkMode ? "vs-dark" : "light"}
-                />
-              )}
-              {active === "note" && (
-                <GraphProvider>
-                  <Graph InEdge={[]} InNode={[]} />
-                </GraphProvider>
-              )}
+
+                <div
+                  className={`flex-grow p-4  overflow-auto    ${
+                    isDarkMode ? "bg-gray-600 " : " bg-white "
+                  }`}
+                >
+                  {activeLeftTab === "description" && (
+                    <div className="prose w-full max-h-[100vh] overflow-y-scroll dark:prose-invert">
+                      <ReactMarkdown>{description}</ReactMarkdown>
+                    </div>
+                  )}
+                  {activeLeftTab === "output" && (
+                    <textarea
+                      value={output}
+                      readOnly
+                      placeholder="Output will appear here..."
+                      className={`w-full h-full p-2 rounded-lg outline-none resize-none
+                      ${
+                        isDarkMode
+                          ? "bg-white bg-opacity-5"
+                          : "bg-white bg-opacity-10"
+                      }`}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent flex flex-col
+            ${
+              isDarkMode
+                ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
+                : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
+            }`}
+            >
+              <div className="p-4 flex justify-between items-center">
+                <h2 className="text-xl font-bold">Code Input</h2>
+
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                    className={`px-4 py-2 rounded-lg transition-all duration-300
+                    ${
+                      isDarkMode
+                        ? "bg-violet-600 hover:bg-violet-700 disabled:bg-violet-800"
+                        : "bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400"
+                    } text-white`}
+                  >
+                    {isLoading ? "Running..." : "Run"}
+                  </button>
+
+                  <button
+                    onClick={toggleDarkMode}
+                    className={`p-3 rounded-full shadow-lg transition-all duration-300 ${
+                      isDarkMode
+                        ? "bg-yellow-400 text-gray-900"
+                        : "bg-indigo-600 text-white"
+                    }`}
+                  >
+                    {isDarkMode ? (
+                      <Sun className="w-5 h-5" />
+                    ) : (
+                      <Moon className="w-5 h-5" />
+                    )}
+                  </button>
+
+                  <Link
+                    to="/home"
+                    className={`p-3 rounded-lg transition-all duration-300
+                    backdrop-blur-lg border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:bg-opacity-20"
+                        : "bg-white bg-opacity-20 hover:bg-opacity-30"
+                    }`}
+                  >
+                    <Home className="w-5 h-5" />
+                  </Link>
+
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className={`px-4 py-2 rounded-lg outline-none
+                    transition-all duration-300 backdrop-blur-lg border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:bg-opacity-20"
+                        : "bg-white bg-opacity-20 hover:bg-opacity-30"
+                    }`}
+                  >
+                    {LANGUAGES.map((lang) => (
+                      <option
+                        key={lang.value}
+                        value={lang.value}
+                        className="text-black"
+                      >
+                        {lang.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    onClick={() => setCode(CODE_TEMPLATES[language])}
+                    className={`px-4 py-2 rounded-lg transition-all duration-300
+                    backdrop-blur-lg border border-transparent
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-10 hover:bg-opacity-20"
+                        : "bg-white bg-opacity-20 hover:bg-opacity-30"
+                    }`}
+                  >
+                    Template
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex border-b border-white border-opacity-20">
+                {["code", "testcase", "note"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`flex-1 px-6 py-3 transition-all duration-300
+                    ${
+                      active === tab
+                        ? isDarkMode
+                          ? "bg-white bg-opacity-10 border-b-2 border-white"
+                          : "bg-white bg-opacity-30 border-b-2 border-white"
+                        : "hover:bg-white hover:bg-opacity-10"
+                    }`}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+              </div>
+
+              <div className="p-6 flex-grow overflow-auto">
+                {active === "code" && (
+                  <div
+                    className={`w-full h-full rounded-lg overflow-hidden border border-transparent
+                  ${
+                    isDarkMode
+                      ? "bg-white bg-opacity-5"
+                      : "bg-white bg-opacity-10"
+                  }`}
+                  >
+                    <CodeEditor
+                      handle_change={(e) => setCode(e)}
+                      value={code}
+                      launguage={language}
+                      theme={isDarkMode ? "vs-dark" : "light"}
+                      map={false}
+                    />
+                  </div>
+                )}
+                {active === "testcase" && (
+                  <CodeEditor
+                    handle_change={(e) => setTestCase(e)}
+                    value={testCase}
+                    launguage={language}
+                    theme={isDarkMode ? "vs-dark" : "light"}
+                    map={false}
+                  />
+                )}
+                {active === "note" && (
+                  <GraphProvider>
+                    <Graph InEdge={[]} InNode={[]} />
+                  </GraphProvider>
+                )}
+              </div>
             </div>
           </div>
-        </Split>
+        )}
       </div>
     </div>
   );

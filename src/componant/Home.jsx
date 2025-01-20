@@ -134,7 +134,7 @@ function Home() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            <Link to={"/"}>
+            <Link to={"/home"}>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

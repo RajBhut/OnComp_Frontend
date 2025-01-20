@@ -40,7 +40,7 @@ const CreateProblem = () => {
         { withCredentials: true }
       );
 
-      window.location.href = "/";
+      window.location.href = "/home";
     } catch (error) {
       console.error("Error submitting problem:", error);
     }
@@ -131,7 +131,7 @@ const CreateProblem = () => {
               Create New Problem
             </h1>
             <Link
-              to="/"
+              to="/home"
               className={`px-4 py-2 rounded-lg transition-all duration-300
               backdrop-blur-lg border border-transparent
               ${

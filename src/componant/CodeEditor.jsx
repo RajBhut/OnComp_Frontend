@@ -1,7 +1,13 @@
 import React, { useEffect } from "react";
 import MonacoEditor from "@monaco-editor/react";
 
-const CodeEditor = ({ handle_change, launguage = "javascript", value }) => {
+const CodeEditor = ({
+  handle_change,
+  launguage = "javascript",
+  value,
+  map = true,
+  theme,
+}) => {
   return (
     <div style={{ height: "500px" }}>
       <MonacoEditor
@@ -11,6 +17,9 @@ const CodeEditor = ({ handle_change, launguage = "javascript", value }) => {
         theme="vs-dark"
         onChange={handle_change}
         value={value}
+        options={{
+          minimap: { enabled: map },
+        }}
       />
     </div>
   );

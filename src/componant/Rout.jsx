@@ -14,8 +14,8 @@ export default function Rout() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/home" element={<Home />} />
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Dashboard />} />
         <Route path="/play" element={<App />} />
         <Route path="/login" element={<Loginc />} />
         <Route path="/create" element={<CreateProblem />} />
