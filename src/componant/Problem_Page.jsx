@@ -495,7 +495,7 @@ export default function Problem_Page() {
                       value={output}
                       readOnly
                       placeholder="Output will appear here..."
-                      className={`w-full h-full p-2 rounded-lg outline-none resize-none
+                      className={`w-full h-full min-h-[100vh] p-2 rounded-lg outline-none resize-none
                       ${
                         isDarkMode
                           ? "bg-white bg-opacity-5"
@@ -515,10 +515,10 @@ export default function Problem_Page() {
                 : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
             }`}
             >
-              <div className="p-4 flex justify-between items-center">
+              <div className="p-4 flex flex-wrap justify-between items-center">
                 <h2 className="text-xl font-bold">Code Input</h2>
 
-                <div className="flex items-center gap-4">
+                <div className="flex  flex-wrap items-center gap-4">
                   <button
                     onClick={handleSubmit}
                     disabled={isLoading}
