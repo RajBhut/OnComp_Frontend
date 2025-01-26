@@ -230,6 +230,7 @@ export default function App() {
                     value={code}
                     launguage={language}
                     theme={isDarkMode ? "vs-dark" : "light"}
+                    handlesubmit={handleSubmit}
                   />
                 </div>
               </div>
@@ -399,6 +400,7 @@ export default function App() {
                       launguage={language}
                       theme={isDarkMode ? "vs-dark" : "light"}
                       map={false}
+                      handlesubmit={handleSubmit}
                     />
                   </div>
                 </div>

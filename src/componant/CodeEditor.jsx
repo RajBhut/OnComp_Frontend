@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import MonacoEditor from "@monaco-editor/react";
+import Editor from "@monaco-editor/react";
 
 const CodeEditor = ({
   handle_change,
@@ -7,10 +8,26 @@ const CodeEditor = ({
   value,
   map = true,
   theme,
+  handlesubmit,
 }) => {
+  const editorRef = useRef(null);
+
+  function handleEditorDidMount(editor, monaco) {
+    editorRef.current = editor;
+    editor.onKeyDown((event) => {
+      const { keyCode, ctrlKey } = event;
+      if (keyCode === 3 && ctrlKey) {
+        event.preventDefault();
+
+        handlesubmit();
+      }
+    });
+  }
+
   return (
     <div style={{ height: "500px" }}>
-      <MonacoEditor
+      <Editor
+        onMount={handleEditorDidMount}
         height="100%"
         defaultLanguage={launguage}
         defaultValue="// Start coding here"

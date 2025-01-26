@@ -431,6 +431,7 @@ export default function Problem_Page() {
                       value={code}
                       launguage={language}
                       theme={isDarkMode ? "vs-dark" : "light"}
+                      handlesubmit={handleSubmit}
                     />
                   </div>
                 )}
@@ -440,6 +441,7 @@ export default function Problem_Page() {
                     value={testCase}
                     launguage={language}
                     theme={isDarkMode ? "vs-dark" : "light"}
+                    handlesubmit={handleSubmit}
                   />
                 )}
                 {active === "note" && (
@@ -632,6 +634,7 @@ export default function Problem_Page() {
                       launguage={language}
                       theme={isDarkMode ? "vs-dark" : "light"}
                       map={false}
+                      handlesubmit={handleSubmit}
                     />
                   </div>
                 )}
@@ -642,6 +645,7 @@ export default function Problem_Page() {
                     launguage={language}
                     theme={isDarkMode ? "vs-dark" : "light"}
                     map={false}
+                    handlesubmit={handleSubmit}
                   />
                 )}
                 {active === "note" && (
