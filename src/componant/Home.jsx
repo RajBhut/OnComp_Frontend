@@ -117,11 +117,11 @@ const FeatureCard = ({ icon, title, description, videoUrl, isDarkMode }) => {
         repeatType: "loop",
         ease: "easeInOut",
       }}
-      className="relative group rounded-2xl "
+      className="relative group rounded-2xl w-full min-h-48 max-w-[300px] "
       onMouseEnter={() => setIsVideoVisible(true)}
       onMouseLeave={() => setIsVideoVisible(false)}
     >
-      <div className="p-6 bg-white/10 backdrop-blur-lg rounded-2xl ">
+      <div className="p-6 bg-white/10 backdrop-blur-lg  rounded-2xl  relative group  w-full min-h-52 max-w-[300px]">
         {!isVideoVisible && (
           <div
             className="absolute inset-0 bg-white/10 rounded-2xl"
@@ -237,7 +237,7 @@ function Home() {
           </motion.p>
 
           <motion.div
-            className="flex md:flex-row flex-col gap-4 flex-wrap justify-center relative"
+            className="flex flex-wrap justify-center gap-6 mb-12"
             variants={containerVariants}
           >
             <FeatureCard
