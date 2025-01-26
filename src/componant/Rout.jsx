@@ -10,6 +10,7 @@ import Problem_Page from "./Problem_Page";
 import Graph from "./Graph";
 import GraphProvider from "./GraphProvider";
 import Home from "./Home";
+import PlayerState from "./PlayerState";
 export default function Rout() {
   return (
     <BrowserRouter>
@@ -21,7 +22,8 @@ export default function Rout() {
         <Route path="/create" element={<CreateProblem />} />
         <Route path="/yourcode" element={<Yourcode />} />
         <Route path="/add" element={<ProblemAdder />} />
-        <Route path="/home" element={<Dashboard />} />
+
+        <Route path="/state" element={<PlayerState />} />
         <Route
           path="/problem/:id"
           element={

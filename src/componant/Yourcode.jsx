@@ -98,9 +98,9 @@ const YourCode = () => {
                     ? "bg-yellow-400 text-gray-900"
                     : "bg-indigo-600 text-white"
                 }`}
-                to={"/home"}
+                to={"/state"}
               >
-                Playground
+                Player State
               </Link>
               <button
                 onClick={toggleDarkMode}

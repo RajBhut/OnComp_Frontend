@@ -40,7 +40,7 @@ export default function App() {
     { value: "javascript", label: "JavaScript" },
     { value: "python", label: "Python" },
     { value: "java", label: "Java" },
-    { value: "cpp", label: "C++" },
+    // { value: "cpp", label: "C++" },
   ];
   const handleSubmit = async () => {
     if (!code.trim()) {
@@ -130,7 +130,7 @@ export default function App() {
                 <div className="grid  grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                   <button
                     onClick={toggleDarkMode}
-                    className={`p-3  w-fit rounded-full shadow-lg transition-all duration-300 ${
+                    className={`p-3 hover:rotate-180  w-fit rounded-full shadow-lg transition-all duration-300 ${
                       isDarkMode
                         ? "bg-yellow-400 text-gray-900"
                         : "bg-indigo-600 text-white"
@@ -144,7 +144,7 @@ export default function App() {
                   </button>
 
                   <Link
-                    to="/"
+                    to="/home"
                     className={`px-4 py-2 rounded-lg text-center transition-all duration-300
                       backdrop-blur-lg border border-transparent
                       ${
@@ -298,7 +298,7 @@ export default function App() {
                   <div className="grid  grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                     <button
                       onClick={toggleDarkMode}
-                      className={`p-3  w-fit rounded-full shadow-lg transition-all duration-300 ${
+                      className={`p-3 hover:rotate-180   w-fit rounded-full shadow-lg transition-all duration-300 ${
                         isDarkMode
                           ? "bg-yellow-400 text-gray-900"
                           : "bg-indigo-600 text-white"
@@ -312,7 +312,7 @@ export default function App() {
                     </button>
 
                     <Link
-                      to="/"
+                      to="/home"
                       className={`px-4 py-2 rounded-lg text-center transition-all duration-300
                       backdrop-blur-lg border border-transparent
                       ${
