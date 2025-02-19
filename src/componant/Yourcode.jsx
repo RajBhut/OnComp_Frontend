@@ -21,7 +21,22 @@ const YourCode = () => {
     return false;
   });
 
+  const check_user = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/users/profile`, {
+        withCredentials: true,
+      });
+      if (res.data.user) {
+        setuser(res.data.user);
+      }
+    } catch (error) {
+      console.log(error);
+      window.location.href = "/login";
+    }
+  };
+
   useEffect(() => {
+    check_user();
     handleFetch();
 
     if (isDarkMode) {

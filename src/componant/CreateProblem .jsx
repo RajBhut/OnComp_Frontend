@@ -1,5 +1,6 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { Usercontext } from "./UsrProvider";
 import { Moon, Sun, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Link } from "react-router-dom";
@@ -18,6 +19,23 @@ const CreateProblem = () => {
     }
     return false;
   });
+  const { user, setuser } = useContext(Usercontext);
+  const check_user = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/users/profile`, {
+        withCredentials: true,
+      });
+      if (res.data.user) {
+        setuser(res.data.user);
+      }
+    } catch (error) {
+      console.log(error);
+      window.location.href = "/login";
+    }
+  };
+  useState(() => {
+    check_user(0);
+  }, []);
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark");

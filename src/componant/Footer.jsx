@@ -7,7 +7,6 @@ import {
   MailIcon,
   ArrowRightIcon,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const Footer = ({ isDarkMode }) => {
   const [email, setEmail] = useState("");

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Search, Plus, Moon, Sun } from "lucide-react";
 import axios from "axios";
+import { Usercontext } from "./UsrProvider";
 import { Link } from "react-router-dom";
 
 import Nav from "./Nav";
@@ -18,8 +19,22 @@ const Dashboard = () => {
     }
     return false;
   });
-
+  const { user, setuser } = useContext(Usercontext);
+  const check_user = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/users/profile`, {
+        withCredentials: true,
+      });
+      if (res.data.user) {
+        setuser(res.data.user);
+      }
+    } catch (error) {
+      console.log(error);
+      window.location.href = "/login";
+    }
+  };
   useEffect(() => {
+    check_user();
     handleFetch();
 
     if (isDarkMode) {

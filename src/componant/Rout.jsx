@@ -1,4 +1,5 @@
-import React from "react";
+import { React, useContext, useEffect } from "react";
+import { Usercontext } from "./UsrProvider";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Loginc from "./Loginc";
 import App from "../App";
@@ -12,6 +13,8 @@ import GraphProvider from "./GraphProvider";
 import Home from "./Home";
 import PlayerState from "./PlayerState";
 export default function Rout() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   return (
     <BrowserRouter>
       <Routes>

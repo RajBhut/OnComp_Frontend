@@ -189,6 +189,20 @@ export default function Problem_Page() {
     // { value: "cpp", label: "C++" },
   ];
 
+  const check_status = (code) => {
+    let lines = code.split("\n").map((line) => line.trim());
+
+    let failedLine = lines.find((line) => line.includes("Test Cases Failed:"));
+
+    if (failedLine) {
+      let failedCount = parseInt(failedLine.split(":")[1].trim(), 10);
+
+      return failedCount === 0;
+    }
+
+    console.error("Failed to find test cases result in the output.");
+    return false;
+  };
   const handleSubmit = async () => {
     if (!code.trim()) {
       alert("Please enter some code");
@@ -207,6 +221,18 @@ export default function Problem_Page() {
         headers: { "Content-Type": "application/json" },
         withCredentials: false,
       });
+      if (check_status(response.data)) {
+        try {
+          let res = await axios.post(
+            `${API_URL}/problem/solved/${id}`,
+            {},
+            { withCredentials: true }
+          );
+          console.log(res);
+        } catch (error) {
+          console.error(error);
+        }
+      }
       setOutput(response.data);
     } catch (error) {
       console.error(error);
