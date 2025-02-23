@@ -62,7 +62,7 @@ const CustomNode = ({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Top}
-        isConnectable={isConnectable}
+        isConnectable={true}
         className="w-3 h-3 bg-blue-500"
       />
       <div className="font-bold">{data.label}</div>
@@ -88,7 +88,7 @@ const CustomNode = ({ data, isConnectable }) => {
       <Handle
         type="source"
         position={Position.Bottom}
-        isConnectable={isConnectable}
+        isConnectable={true}
         className="w-3 h-3 bg-blue-500"
       />
 
@@ -96,14 +96,14 @@ const CustomNode = ({ data, isConnectable }) => {
         type="source"
         position={Position.Right}
         id="right"
-        isConnectable={isConnectable}
+        isConnectable={true}
         className="w-3 h-3 bg-green-500"
       />
       <Handle
         type="source"
         position={Position.Left}
         id="left"
-        isConnectable={isConnectable}
+        isConnectable={true}
         className="w-3 h-3 bg-green-500"
       />
     </div>

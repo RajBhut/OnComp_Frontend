@@ -10,8 +10,8 @@ import ReactMarkdown from "react-markdown";
 import Graph from "./Graph";
 import GraphProvider, { Graphcontext } from "./GraphProvider";
 import { useMediaQuery } from "react-responsive";
-export default function Problem_Page() {
-  const isBigScreen = useMediaQuery({ query: "(min-width: 1024px)" });
+export default function Submited() {
+ 
 
   const API_URL = import.meta.env.VITE_API_URL;
   const CODE_API_URL = import.meta.env.VITE_CODE_API_URL;
@@ -42,10 +42,7 @@ export default function Problem_Page() {
 
   const recive_notes_data = async () => {
     try {
-      const res = await axios.get(`${API_URL}/problem/update/${id}`, {
-        withCredentials: true,
-      });
-
+      const res = await axios.get(`${API_URL}/problem/update/${id}`);
       if (res.data.nodedata) setGraphdata(JSON.parse(res.data.nodedata));
       if (res.data.edgedata) setEdgedata(JSON.parse(res.data.edgedata));
     } catch (error) {
@@ -108,7 +105,7 @@ export default function Problem_Page() {
 
   const fetch_problem_data = async (id) => {
     try {
-      const res = await axios.get(`${API_URL}/problem/des/${id}`, {
+      const res = await axios.get(`${API_URL}/problem/update/${id}`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
@@ -122,7 +119,7 @@ export default function Problem_Page() {
       }
     } catch (error) {
       console.error("Error fetching problem data:", error);
-      navigator("/");
+      navigator("/login");
     }
   };
 
@@ -228,10 +225,6 @@ export default function Problem_Page() {
         try {
           let res = await axios.post(
             `${API_URL}/problem/solved/${id}`,
-            {
-              lan: language.toUpperCase(),
-              code: btoa(encodeURIComponent(code)),
-            },
             {
               language: language.toUpperCase(),
               function: btoa(encodeURIComponent(code)),
@@ -482,7 +475,7 @@ export default function Problem_Page() {
                 )}
                 {active === "note" && (
                   <GraphProvider>
-                    <Graph InEdge={Edgedata || []} InNode={Graphdata || []} />
+                    <Graph InEdge={[]} InNode={[]} />
                   </GraphProvider>
                 )}
               </div>
@@ -686,7 +679,7 @@ export default function Problem_Page() {
                 )}
                 {active === "note" && (
                   <GraphProvider>
-                    <Graph InEdge={Edgedata || []} InNode={Graphdata || []} />
+                    <Graph InEdge={[]} InNode={[]} />
                   </GraphProvider>
                 )}
               </div>

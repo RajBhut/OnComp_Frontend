@@ -153,52 +153,90 @@ export default function PlayerState() {
                 </option>
               </select>
             </div>
-
             <div className="space-y-4">
               {filteredProblems.map((problem, index) => (
-                <div
+                <motion.div
                   key={index}
-                  className={`rounded-xl p-4 transition-all duration-300
-                    backdrop-blur-lg border border-transparent
-                    hover:shadow-xl hover:scale-[1.02]
-                    ${
-                      isDarkMode
-                        ? "bg-white bg-opacity-10 hover:border-white hover:border-opacity-20"
-                        : "bg-white bg-opacity-20 hover:border-white hover:border-opacity-20"
-                    }`}
+                  whileHover={{ scale: 1.02 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`rounded-xl p-6 transition-all duration-300
+        backdrop-blur-lg border-l-4 shadow-lg
+        ${
+          isDarkMode
+            ? "bg-white bg-opacity-10 hover:bg-opacity-15"
+            : "bg-white bg-opacity-20 hover:bg-opacity-25"
+        }
+        ${
+          problem.difficulty === "EASY"
+            ? "border-green-400"
+            : problem.difficulty === "MEDIUM"
+            ? "border-yellow-400"
+            : "border-red-400"
+        }
+      `}
                 >
                   <Link to={`/problem/${problem.id}`}>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-semibold mb-2">
-                          {problem.title}
-                        </h3>
+                    <div className="flex flex-col sm:flex-row justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-xl font-bold">{problem.title}</h3>
+                          <span
+                            className={`px-3 py-1 text-sm font-medium rounded-full
+                  ${
+                    problem.difficulty === "EASY"
+                      ? "bg-green-400/20 text-green-400"
+                      : problem.difficulty === "MEDIUM"
+                      ? "bg-yellow-400/20 text-yellow-400"
+                      : "bg-red-400/20 text-red-400"
+                  }`}
+                          >
+                            {problem.difficulty}
+                          </span>
+                        </div>
+
                         <div className="flex flex-wrap gap-2">
                           {problem.tags?.map((tag, tagIndex) => (
                             <span
                               key={tagIndex}
                               className={`px-3 py-1 rounded-full text-sm backdrop-blur-lg
-                                ${
-                                  isDarkMode
-                                    ? "bg-white bg-opacity-10 text-gray-100"
-                                    : "bg-white bg-opacity-30 text-gray-900"
-                                }`}
+                    ${
+                      isDarkMode
+                        ? "bg-white bg-opacity-5 text-gray-100"
+                        : "bg-white bg-opacity-30 text-gray-900"
+                    }`}
                             >
                               {tag}
                             </span>
                           ))}
                         </div>
                       </div>
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
-                          problem.difficulty
-                        )}`}
-                      >
-                        {problem.difficulty}
-                      </span>
+                      <div className="flex flex-col items-end justify-between">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-sm ${
+                              isDarkMode ? "text-gray-300" : "text-gray-600"
+                            }`}
+                          >
+                            Success Rate:
+                          </span>
+                          <span
+                            className={`font-bold ${
+                              problem.successRate > 70
+                                ? "text-green-400"
+                                : problem.successRate > 40
+                                ? "text-yellow-400"
+                                : "text-red-400"
+                            }`}
+                          >
+                            {problem.successRate || 0}%
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </Link>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>

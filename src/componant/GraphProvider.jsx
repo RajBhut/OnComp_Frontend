@@ -4,10 +4,7 @@ export const Graphcontext = createContext();
 
 export default function GraphProvider({ children }) {
   const [Graphdata, setGraphdata] = useState([]);
-  const [Edgedata, setEdgedata] = useState(() => {
-    const storededge = localStorage.getItem("edge");
-    return storededge ? JSON.parse(storededge) : [];
-  });
+  const [Edgedata, setEdgedata] = useState([]);
 
   return (
     <Graphcontext.Provider
