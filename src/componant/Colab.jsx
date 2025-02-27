@@ -7,7 +7,7 @@ import Split from "react-split";
 import { Moon, Sun } from "lucide-react";
 import { useMediaQuery } from "react-responsive";
 export default function Colab() {
-  const [code, setCode] = useState(``);
+  const [code, setCode] = useState(`\n`);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [testCase, setTestCase] = useState("");
