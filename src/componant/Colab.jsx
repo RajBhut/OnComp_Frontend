@@ -28,8 +28,9 @@ export default function Colab() {
     }
     return false;
   });
+  const COLAB_URL = import.meta.env.VITE_COLAB_API;
   useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:8000/ws/${room}`);
+    const ws = new WebSocket(`${COLAB_URL}/ws/${room}`);
 
     ws.onopen = () => {
       console.log(`Connected to room: ${room}`);
