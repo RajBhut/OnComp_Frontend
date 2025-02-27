@@ -12,6 +12,8 @@ import Graph from "./Graph";
 import GraphProvider from "./GraphProvider";
 import Home from "./Home";
 import PlayerState from "./PlayerState";
+import Colab from "./Colab";
+import JoinRoom from "./JoinRoom";
 export default function Rout() {
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -27,6 +29,8 @@ export default function Rout() {
         <Route path="/add" element={<ProblemAdder />} />
 
         <Route path="/state" element={<PlayerState />} />
+        <Route path="/col/:room" element={<Colab />} />
+        <Route path="/jr" element={<JoinRoom />} />
         <Route
           path="/problem/:id"
           element={
