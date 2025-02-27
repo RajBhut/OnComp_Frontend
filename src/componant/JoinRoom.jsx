@@ -26,7 +26,6 @@ export default function JoinRoom() {
   const [createError, setCreateError] = useState(null);
   const [existingRoomNames, setExistingRoomNames] = useState(new Set());
 
-  // Toggle dark mode functionality
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     if (isDarkMode) {
@@ -36,7 +35,6 @@ export default function JoinRoom() {
     }
   };
 
-  // Fetch rooms data
   useEffect(() => {
     const fetchRooms = async () => {
       try {
@@ -45,11 +43,9 @@ export default function JoinRoom() {
           withCredentials: true,
         });
 
-        // Make sure response.data is an array
         if (Array.isArray(response.data)) {
           setRooms(response.data);
 
-          // Store existing room names in a Set for uniqueness check
           const nameSet = new Set();
           response.data.forEach((room) => {
             if (room.name) nameSet.add(room.name);
@@ -71,18 +67,16 @@ export default function JoinRoom() {
     if (user) {
       fetchRooms();
     } else {
-      // Redirect to login if not authenticated
       navigate("/login");
     }
   }, [user, API_URL, navigate]);
 
-  // Generate a random unique room name
   const generateRandomRoomName = () => {
     const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
     const length = 8;
     let result;
     let attempts = 0;
-    const maxAttempts = 50; // Prevent infinite loops
+    const maxAttempts = 50;
 
     do {
       result = "";
@@ -93,7 +87,6 @@ export default function JoinRoom() {
       }
       attempts++;
 
-      // Break if we've tried too many times to avoid potential infinite loop
       if (attempts > maxAttempts) {
         console.warn("Couldn't generate unique room name after many attempts");
         break;
@@ -103,13 +96,11 @@ export default function JoinRoom() {
     return result;
   };
 
-  // Handle random name generation
   const handleGenerateRandomName = () => {
     const randomName = generateRandomRoomName();
     setRoomName(randomName);
   };
 
-  // Create a new room
   const handleCreateRoom = async (e) => {
     e.preventDefault();
     if (!roomName) {
@@ -135,7 +126,6 @@ export default function JoinRoom() {
         }
       );
 
-      // Add the new room to the rooms list
       if (response.data.room) {
         setRooms((prevRooms) =>
           Array.isArray(prevRooms)
@@ -152,14 +142,12 @@ export default function JoinRoom() {
     }
   };
 
-  // Delete a room
   const handleDeleteRoom = async (roomId) => {
     try {
       await axios.delete(`${API_URL}/problem/room/${roomId}`, {
         withCredentials: true,
       });
 
-      // Remove the deleted room from the rooms list
       setRooms((prevRooms) => {
         if (Array.isArray(prevRooms)) {
           return prevRooms.filter((room) => room.name !== roomId);
@@ -167,7 +155,6 @@ export default function JoinRoom() {
         return [];
       });
 
-      // Also remove from the existing names set
       setExistingRoomNames((prev) => {
         const updated = new Set(prev);
         updated.delete(roomId);
@@ -179,7 +166,6 @@ export default function JoinRoom() {
     }
   };
 
-  // Filter rooms based on search term
   const filteredRooms = Array.isArray(rooms)
     ? rooms.filter(
         (room) =>
@@ -196,7 +182,6 @@ export default function JoinRoom() {
       )
     : [];
 
-  // Check if the current user is the creator of a room
   const isRoomCreator = (room) => {
     return user && room.user_id === user.id;
   };
@@ -233,7 +218,6 @@ export default function JoinRoom() {
           </div>
         </header>
 
-        {/* Create Room Form */}
         <div
           className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent 
           transition-all duration-300 p-6
@@ -308,7 +292,6 @@ export default function JoinRoom() {
           {createError && <p className="mt-2 text-red-400">{createError}</p>}
         </div>
 
-        {/* Room List */}
         <div
           className={`rounded-lg shadow-xl backdrop-blur-lg border border-transparent 
           transition-all duration-300 hover:shadow-2xl p-6
@@ -385,7 +368,7 @@ export default function JoinRoom() {
                     </div>
                     <div className="flex gap-2">
                       <Link
-                        to={`/room/${room.name}`}
+                        to={`/col/${room.name}`}
                         className="px-4 py-2 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white"
                       >
                         Join

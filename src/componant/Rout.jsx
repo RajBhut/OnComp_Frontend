@@ -30,7 +30,7 @@ export default function Rout() {
 
         <Route path="/state" element={<PlayerState />} />
         <Route path="/col/:room" element={<Colab />} />
-        <Route path="/jr" element={<JoinRoom />} />
+        <Route path="/Colab" element={<JoinRoom />} />
         <Route
           path="/problem/:id"
           element={

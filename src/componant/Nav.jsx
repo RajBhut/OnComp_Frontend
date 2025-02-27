@@ -6,7 +6,7 @@ import { Menu, X } from "lucide-react";
 function Nav({ isDarkMode }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navItems = ["Home", "YourCode", "Create", "Play", "Login"];
+  const navItems = ["Home", "YourCode", "Create", "Play", "Colab", "Login"];
 
   const navVariants = {
     hidden: { opacity: 0, y: -20 },
