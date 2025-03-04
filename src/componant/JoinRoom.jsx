@@ -35,6 +35,36 @@ export default function JoinRoom() {
     }
   };
 
+  const generateRandomRoomName = () => {
+    const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const length = 8;
+    let result;
+    let attempts = 0;
+    const maxAttempts = 50;
+
+    do {
+      result = "";
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(
+          Math.floor(Math.random() * characters.length)
+        );
+      }
+      attempts++;
+
+      if (attempts > maxAttempts) {
+        console.warn("Couldn't generate unique room name after many attempts");
+        break;
+      }
+    } while (existingRoomNames.has(result));
+
+    return result;
+  };
+
+  const handleGenerateRandomName = () => {
+    const randomName = generateRandomRoomName();
+    setRoomName(randomName);
+  };
+
   useEffect(() => {
     const fetchRooms = async () => {
       try {
@@ -66,40 +96,11 @@ export default function JoinRoom() {
 
     if (user) {
       fetchRooms();
+      handleGenerateRandomName();
     } else {
       navigate("/login");
     }
   }, [user, API_URL, navigate]);
-
-  const generateRandomRoomName = () => {
-    const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-    const length = 8;
-    let result;
-    let attempts = 0;
-    const maxAttempts = 50;
-
-    do {
-      result = "";
-      for (let i = 0; i < length; i++) {
-        result += characters.charAt(
-          Math.floor(Math.random() * characters.length)
-        );
-      }
-      attempts++;
-
-      if (attempts > maxAttempts) {
-        console.warn("Couldn't generate unique room name after many attempts");
-        break;
-      }
-    } while (existingRoomNames.has(result));
-
-    return result;
-  };
-
-  const handleGenerateRandomName = () => {
-    const randomName = generateRandomRoomName();
-    setRoomName(randomName);
-  };
 
   const handleCreateRoom = async (e) => {
     e.preventDefault();
@@ -237,7 +238,7 @@ export default function JoinRoom() {
                 <div className="relative flex-1">
                   <input
                     type="text"
-                    placeholder="Enter Room Name"
+                    disabled
                     value={roomName}
                     onChange={(e) => setRoomName(e.target.value)}
                     className={`w-full px-4 py-2 rounded-lg outline-none 
