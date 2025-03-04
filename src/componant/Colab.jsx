@@ -71,7 +71,7 @@ export default function Colab() {
         const msgData = { event: "code", data: code };
         socketRef.current.send(JSON.stringify(msgData));
       }
-    }, 50);
+    }, 5);
 
     return () => clearTimeout(debounceTimer);
   }, [code]);
