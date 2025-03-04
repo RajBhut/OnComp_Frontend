@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
 
 import { Link, useParams } from "react-router-dom";
@@ -6,6 +6,7 @@ import CodeEditor from "./CodeEditor";
 import Split from "react-split";
 import { Moon, Sun } from "lucide-react";
 import { useMediaQuery } from "react-responsive";
+import { Usercontext } from "./UsrProvider";
 export default function Colab() {
   const [code, setCode] = useState(`\n`);
   const [messages, setMessages] = useState([]);
@@ -21,6 +22,7 @@ export default function Colab() {
   const [socket, setSocket] = useState(null);
   const socketRef = useRef(null);
   const { room } = useParams();
+  const { setuser, user } = useContext(Usercontext);
   const [data, setData] = useState("\n");
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
@@ -44,7 +46,10 @@ export default function Colab() {
         if (receivedMessage.event == "join") {
           setCode(receivedMessage.data);
         }
-        if (receivedMessage.event == "code") {
+        if (
+          receivedMessage.event == "code" &&
+          receivedMessage.user !== user.id
+        ) {
           if (receivedMessage.data !== code) {
             setData(receivedMessage.data);
             setCode(receivedMessage.data);
@@ -68,10 +73,10 @@ export default function Colab() {
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       if (socketRef.current) {
-        const msgData = { event: "code", data: code };
+        const msgData = { event: "code", data: code, user: user.id };
         socketRef.current.send(JSON.stringify(msgData));
       }
-    }, 5);
+    }, 100);
 
     return () => clearTimeout(debounceTimer);
   }, [code]);
@@ -84,7 +89,7 @@ export default function Colab() {
     if (socket && message.trim() !== "") {
       const msgData = { event: "chat", data: message };
       socket.send(JSON.stringify(msgData));
-      setMessage(""); // Clear input after sending
+      setMessage("");
     }
   };
 
