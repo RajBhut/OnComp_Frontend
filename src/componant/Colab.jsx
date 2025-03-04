@@ -69,7 +69,7 @@ export default function Colab() {
         } else if (
           receivedMessage.event === "code" &&
           receivedMessage.user !== user.id &&
-          receivedMessage.data !== latestCode.current
+          receivedMessage.data !== code
         ) {
           setCode(receivedMessage.data);
         } else if (receivedMessage.event === "chat") {
