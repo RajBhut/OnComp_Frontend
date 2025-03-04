@@ -216,7 +216,7 @@ export default function ProblemAdder() {
               </button>
 
               <Link
-                to="/"
+                to="/home"
                 className={`px-4 py-2 rounded-lg transition-all duration-300 
                   backdrop-blur-lg border border-transparent
                   ${
