@@ -48,12 +48,10 @@ export default function Colab() {
         }
         if (
           receivedMessage.event == "code" &&
-          receivedMessage.user !== user.id
+          receivedMessage.user !== user.id &&
+          receivedMessage.data !== code
         ) {
-          if (receivedMessage.data !== code) {
-            setData(receivedMessage.data);
-            setCode(receivedMessage.data);
-          }
+          setCode(receivedMessage.data);
         } else {
           setMessages((prev) => [
             ...prev,
