@@ -6,7 +6,7 @@ const CodeEditor = ({
   handle_change,
   launguage = "javascript",
   value,
-  map = true,
+  map = false,
   theme,
   handlesubmit,
 }) => {
