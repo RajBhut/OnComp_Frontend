@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
+import { debounce } from "lodash";
 
 import { Link, useParams } from "react-router-dom";
 import CodeEditor from "./CodeEditor";
@@ -31,6 +32,27 @@ export default function Colab() {
     return false;
   });
   const COLAB_URL = import.meta.env.VITE_COLAB_API;
+
+  const debouncedSync = useRef(
+    debounce((newCode, userId) => {
+      if (socketRef.current) {
+        socketRef.current.send(
+          JSON.stringify({
+            event: "code",
+            data: newCode,
+            user: userId,
+            room: room,
+          })
+        );
+      }
+    }, 500)
+  ).current;
+
+  const handleCodeChange = (newCode) => {
+    setCode(newCode);
+    debouncedSync(newCode, user.id);
+  };
+
   useEffect(() => {
     const ws = new WebSocket(`${COLAB_URL}/ws/${room}`);
 
@@ -38,21 +60,19 @@ export default function Colab() {
       console.log(`Connected to room: ${room}`);
       ws.send(JSON.stringify({ event: "test", data: `User joined ${room}` }));
     };
-
     ws.onmessage = (event) => {
       const receivedMessage = JSON.parse(event.data);
 
-      if (receivedMessage.room == room) {
-        if (receivedMessage.event == "join") {
+      if (receivedMessage.room === room) {
+        if (receivedMessage.event === "join") {
           setCode(receivedMessage.data);
-        }
-        if (
-          receivedMessage.event == "code" &&
+        } else if (
+          receivedMessage.event === "code" &&
           receivedMessage.user !== user.id &&
-          receivedMessage.data !== code
+          receivedMessage.data !== latestCode.current
         ) {
           setCode(receivedMessage.data);
-        } else {
+        } else if (receivedMessage.event === "chat") {
           setMessages((prev) => [
             ...prev,
             `[${receivedMessage.room}] ${receivedMessage.data}`,
@@ -60,6 +80,31 @@ export default function Colab() {
         }
       }
     };
+    // ws.onmessage = (event) => {
+    //   const receivedMessage = JSON.parse(event.data);
+
+    //   if (receivedMessage.room == room) {
+    //     if (receivedMessage.event == "join") {
+    //       setCode(receivedMessage.data);
+    //     }
+    //     if (
+    //       receivedMessage.event == "code" &&
+    //       receivedMessage.user !== user.id &&
+    //       receivedMessage.data !== latestCode.current
+    //     ) {
+    //       console.log("rec", receivedMessage.data);
+    //       console.log("code", latestCode.current);
+
+    //       console.log("runed");
+    //       setCode(receivedMessage.data);
+    //     } else {
+    //       setMessages((prev) => [
+    //         ...prev,
+    //         `[${receivedMessage.room}] ${receivedMessage.data}`,
+    //       ]);
+    //     }
+    //   }
+    // };
 
     ws.onclose = () => console.log(`Disconnected from room: ${room}`);
 
@@ -68,16 +113,16 @@ export default function Colab() {
 
     return () => ws.close();
   }, [room]);
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      if (socketRef.current) {
-        const msgData = { event: "code", data: code, user: user.id };
-        socketRef.current.send(JSON.stringify(msgData));
-      }
-    }, 100);
+  // useEffect(() => {
+  //   const debounceTimer = setTimeout(() => {
+  //     if (socketRef.current) {
+  //       const msgData = { event: "code", data: code, user: user.id };
+  //       socketRef.current.send(JSON.stringify(msgData));
+  //     }
+  //   }, 100);
 
-    return () => clearTimeout(debounceTimer);
-  }, [code]);
+  //   return () => clearTimeout(debounceTimer);
+  // }, [code]);
 
   const handleChange = (e) => {
     setData(e.target.value);
@@ -463,7 +508,7 @@ export default function Colab() {
                       }`}
                   >
                     <CodeEditor
-                      handle_change={(e) => setCode(e)}
+                      handle_change={handleCodeChange}
                       value={code}
                       launguage={language}
                       theme={isDarkMode ? "vs-dark" : "light"}
