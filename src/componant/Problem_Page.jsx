@@ -17,6 +17,7 @@ export default function Problem_Page() {
   const CODE_API_URL = import.meta.env.VITE_CODE_API_URL;
   const { Graphdata, setGraphdata, Edgedata, setEdgedata } =
     useContext(Graphcontext);
+  const [probdata, setprobdata] = useState(null);
   const [isfatched, setisfatched] = useState(false);
   const [description, setDescription] = useState(null);
   const { setuser, user } = useContext(Usercontext);
@@ -117,6 +118,7 @@ export default function Problem_Page() {
 
       if (problem && problem.description) {
         setDescription(problem.description);
+        setprobdata(problem);
       } else {
         setDescription(null);
       }
@@ -279,6 +281,54 @@ export default function Problem_Page() {
       }`}
     >
       <div className="container mx-auto min-w-full">
+        <div
+          className={`p-6 mb-4 rounded-lg shadow-xl backdrop-blur-lg border border-transparent
+    ${isDarkMode ? "bg-white bg-opacity-10" : "bg-white bg-opacity-20"}`}
+        >
+          <div className="flex flex-wrap justify-between items-start gap-4">
+            <div className="space-y-2 flex-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-2xl font-bold">
+                  {probdata?.title || "Loading..."}
+                </h1>
+                <span
+                  className={`px-3 py-1 text-sm font-medium rounded-full
+            ${
+              probdata?.difficulty === "EASY"
+                ? "bg-green-400/20 text-green-400"
+                : probdata?.difficulty === "MEDIUM"
+                ? "bg-yellow-400/20 text-yellow-400"
+                : "bg-red-400/20 text-red-400"
+            }`}
+                >
+                  {probdata?.difficulty || ""}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {probdata?.tags?.map((tag, index) => (
+                  <span
+                    key={index}
+                    className={`px-3 py-1 text-sm rounded-full backdrop-blur-lg
+                ${
+                  isDarkMode
+                    ? "bg-white bg-opacity-5 text-gray-200"
+                    : "bg-white bg-opacity-30 text-gray-900"
+                }`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-4 text-sm opacity-75">
+            <div>
+              <span className="font-medium">Problem ID:</span> #{probdata?.id}
+            </div>
+          </div>
+        </div>
         {isBigScreen ? (
           <Split className="flex" sizes={[40, 60]}>
             <div className="flex-col w-full pr-2">

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import axios from "axios";
 import { debounce } from "lodash";
 
@@ -10,21 +10,21 @@ import { useMediaQuery } from "react-responsive";
 import { Usercontext } from "./UsrProvider";
 export default function Colab() {
   const [code, setCode] = useState(`\n`);
-  const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState("");
-  const [testCase, setTestCase] = useState("");
-  const [testCode, setTestCode] = useState("");
+  const [, setMessages] = useState([]);
+
+  const [testCase] = useState("");
+  const [testCode] = useState("");
   const [output, setOutput] = useState("");
   const [language, setLanguage] = useState("python");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("code");
   const CODE_API_URL = import.meta.env.VITE_CODE_API_URL;
   const isBigScreen = useMediaQuery({ query: "(min-width: 1024px)" });
-  const [socket, setSocket] = useState(null);
+  const [, setSocket] = useState(null);
   const socketRef = useRef(null);
   const { room } = useParams();
-  const { setuser, user } = useContext(Usercontext);
-  const [data, setData] = useState("\n");
+  const { user } = useContext(Usercontext);
+
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("darkMode") === "true";
@@ -123,18 +123,6 @@ export default function Colab() {
 
   //   return () => clearTimeout(debounceTimer);
   // }, [code]);
-
-  const handleChange = (e) => {
-    setData(e.target.value);
-  };
-
-  const sendMessage = () => {
-    if (socket && message.trim() !== "") {
-      const msgData = { event: "chat", data: message };
-      socket.send(JSON.stringify(msgData));
-      setMessage("");
-    }
-  };
 
   useEffect(() => {
     if (isDarkMode) {

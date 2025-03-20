@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Search, Plus, Moon, Sun } from "lucide-react";
+import { useEffect, useState, useContext } from "react";
+import { Search, Moon, Sun } from "lucide-react";
 import axios from "axios";
 import { Usercontext } from "./UsrProvider";
 import { Link } from "react-router-dom";
@@ -12,14 +12,14 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDifficultyFilter, setSelectedDifficultyFilter] =
     useState("ALL");
-  const [isFormVisible, setIsFormVisible] = useState(false);
+
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("darkMode") === "true";
     }
     return false;
   });
-  const { user, setuser } = useContext(Usercontext);
+  const { setuser } = useContext(Usercontext);
   const check_user = async () => {
     try {
       const res = await axios.get(`${API_URL}/users/profile`, {
@@ -30,7 +30,7 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.log(error);
-      window.location.href = "/login";
+      // window.location.href = "/login";
     }
   };
   useEffect(() => {

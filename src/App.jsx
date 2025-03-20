@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 import { Link } from "react-router-dom";
@@ -8,8 +8,8 @@ import { Moon, Sun } from "lucide-react";
 import { useMediaQuery } from "react-responsive";
 export default function App() {
   const [code, setCode] = useState(``);
-  const [testCase, setTestCase] = useState("");
-  const [testCode, setTestCode] = useState("");
+  const [testCase] = useState("");
+  const [testCode] = useState("");
   const [output, setOutput] = useState("");
   const [language, setLanguage] = useState("python");
   const [isLoading, setIsLoading] = useState(false);

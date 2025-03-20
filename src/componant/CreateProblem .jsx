@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { Usercontext } from "./UsrProvider";
 import { Moon, Sun, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -19,7 +19,7 @@ const CreateProblem = () => {
     }
     return false;
   });
-  const { user, setuser } = useContext(Usercontext);
+  const { setuser } = useContext(Usercontext);
   const check_user = async () => {
     try {
       const res = await axios.get(`${API_URL}/users/profile`, {

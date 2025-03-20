@@ -1,16 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  GithubIcon,
-  TwitterIcon,
-  LinkedinIcon,
-  MailIcon,
-  ArrowRightIcon,
-} from "lucide-react";
+import { GithubIcon, TwitterIcon, LinkedinIcon, MailIcon } from "lucide-react";
 
 const Footer = ({ isDarkMode }) => {
-  const [email, setEmail] = useState("");
-
   const socialLinks = [
     {
       icon: <GithubIcon />,

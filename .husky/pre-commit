@@ -1,0 +1,16 @@
+
+echo "Running pre-commit checks..."
+
+# Run linting and formatting
+npm run lint
+npm run format
+
+# # Check for unused dependencies
+# echo "Checking for unused dependencies..."
+# npm run check-deps
+
+# # Fail the commit if unused dependencies are found
+# if [ $? -ne 0 ]; then
+#   echo "Unused dependencies found. Please remove them before committing."
+#   exit 1
+# fi

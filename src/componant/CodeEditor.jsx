@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import MonacoEditor from "@monaco-editor/react";
+import { useRef } from "react";
+
 import Editor from "@monaco-editor/react";
 
 const CodeEditor = ({
@@ -7,12 +7,12 @@ const CodeEditor = ({
   launguage = "javascript",
   value,
   map = false,
-  theme,
+
   handlesubmit,
 }) => {
   const editorRef = useRef(null);
 
-  function handleEditorDidMount(editor, monaco) {
+  function handleEditorDidMount(editor) {
     editorRef.current = editor;
     editor.onKeyDown((event) => {
       const { keyCode, ctrlKey } = event;
